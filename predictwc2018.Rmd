@@ -4,3 +4,77 @@ output: html_document
 ---
 
 This is a project for prediction from group stage to Round 16, quarterfinals, semifinals final and runner-up
+
+Load different packages that will use in this model:
+
+```{r}
+pkg_list = c("ggplot2", "stringr", "rvest", "tidyr", "dplyr", "gsubfn")
+mia_pkgs = pkg_list[!(pkg_list %in% installed.packages()[,"Package"])]
+if(length(mia_pkgs) > 0) install.packages(mia_pkgs)
+loaded_pkgs = lapply(pkg_list, require, character.only=TRUE)
+```
+
+Using data from wikipedia from Worldcup 1998, 2002, 2006, 2010, 2014 mainly from wikipedia.
+
+Wiki from World Cup history
+```{r}
+world_data = read.csv("wc_data.csv")
+attributes(world_data)
+```
+
+Group A:
+```{r}
+RSA = "Russia"
+KSA = "Saudi Arabia"
+URU = "Uruguay"
+EGY = "Egypt"
+
+rsa = 0
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == RSA){ rsa = i }
+  else if(world_data$Team[i] == KSA){ ksa = i }
+  else if(world_data$Team[i] == URU){ uru = i }
+  else if(world_data$Team[i] == EGY){ egy = i }
+}
+rsa
+ksa
+uru
+egy
+```
+
+Group B:
+```{r}
+group = read.csv("Air_Traffic_Passenger_Statistics.csv")
+summary(group)
+```
+
+Group C:
+```{r}
+
+```
+
+Group D:
+```{r}
+
+```
+
+Groupd E:
+```{r}
+
+```
+
+Group F:
+```{r}
+
+```
+
+Group G:
+```{r}
+
+```
+
+Group H:
+```{r}
+
+```
+
