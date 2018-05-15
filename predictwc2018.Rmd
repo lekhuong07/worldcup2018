@@ -18,8 +18,23 @@ Using data from wikipedia from Worldcup 1998, 2002, 2006, 2010, 2014 mainly from
 
 Wiki from World Cup history
 ```{r}
-world_data = read.csv("wc_data.csv")
+world_data = read.csv("worldcup_data.csv")
 attributes(world_data)
+check = vector(mode = "numeric", length = nrow(world_data))
+
+```
+
+Function to find top two team that will advance to next ground, this function will compare Avg_GS, Avg_Gc, Pos, Avg_Pts. 
+```{r}
+groupstage = function(name1, avggs1, avggc1, name2, avggs2, avggc2){
+  score1 = round(max(abs(avggs1), abs(avggc2)) * min(abs(avggs1), abs(avggc2)))
+  score2 = round(max(abs(avggs2), abs(avggc1)) * min(abs(avggs2), abs(avggc1)))
+  
+  if(score1 > score2){ return (name1) }
+  else if(score1 < score2){ return (name2) }
+  else{ return (1) }
+}
+
 ```
 
 Group A:
@@ -29,52 +44,233 @@ KSA = "Saudi Arabia"
 URU = "Uruguay"
 EGY = "Egypt"
 
-rsa = 0
 for(i in 1:nrow(world_data)){
-       if(world_data$Team[i] == RSA){ rsa = i }
-  else if(world_data$Team[i] == KSA){ ksa = i }
-  else if(world_data$Team[i] == URU){ uru = i }
-  else if(world_data$Team[i] == EGY){ egy = i }
+       if(world_data$Team[i] == RSA){ rsa1 = i }
+  else if(world_data$Team[i] == KSA){ ksa1 = i }
+  else if(world_data$Team[i] == URU){ uru1 = i }
+  else if(world_data$Team[i] == EGY){ egy1 = i }
 }
-rsa
-ksa
-uru
-egy
+
+# Ranking average points that each team earned in previous tournaments
+
+t1 = world_data$Avg_D[rsa1]
+t2 = world_data$Avg_D[ksa1]
+t3 = world_data$Avg_D[uru1]
+t4 = world_data$Avg_D[egy1]
+
+B1 = min(x) #A1 = esp1
+B2 = min(x[x!=min(x)]) #A2 = por1
+
+matchA = rep(NA)
+matchA[1] = groupstage(RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1], KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1])
+matchA[2] = groupstage(EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1], URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1])
+
+matchA[3] = groupstage(RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1], EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1])
+matchA[4] = groupstage(URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1], KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1])
+
+matchA[5] = groupstage(URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1], RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1])
+matchA[6] = groupstage(KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1], EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1])
+
+matchA
+t1
+t2
+t3
+t4
 ```
+
+1. Russia
+2. Uruguay
+3. Egypt
+4. Saudi Arabia
 
 Group B:
 ```{r}
-group = read.csv("Air_Traffic_Passenger_Statistics.csv")
-summary(group)
+POR = "Portugal"	
+ESP = "Spain"	
+MAR = "Morocco"	
+IRI = "Iran" 	
+
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == POR){ por1 = i }
+  else if(world_data$Team[i] == ESP){ esp1 = i }
+  else if(world_data$Team[i] == MAR){ mar1 = i }
+  else if(world_data$Team[i] == IRI){ iri1 = i }
+}
+
+# Ranking average points that each team earned in previous tournaments
+
+t1 = world_data$Avg_D[por1]
+t2 = world_data$Avg_D[esp1]
+t3 = world_data$Avg_D[mar1]
+t4 = world_data$Avg_D[iri1]
+
+
+matchB = rep(NA)
+matchB[1] = groupstage(MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1], IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1])
+matchB[2] = groupstage(POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1], ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1])
+
+matchB[3] = groupstage(POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1], MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1])
+matchB[4] = groupstage(IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1], ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1])
+
+matchB[5] = groupstage(ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1], MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1])
+matchB[6] = groupstage(IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1], POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1])
+
+matchB
+t1
+t2
+t3
+t4
 ```
+
+1. Portugal
+2. Spain
+3. Morocco
+4. Iran
 
 Group C:
 ```{r}
+FRA = "France"
+AUS = "Australia"
+PER = "Peru"	
+DAN = "Denmark"	
 
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == FRA){ fra1 = i }
+  else if(world_data$Team[i] == AUS){ aus1 = i }
+  else if(world_data$Team[i] == PER){ per1 = i }
+  else if(world_data$Team[i] == DAN){ dan1 = i }
+}
+
+x = c(fra1, dan1, per1, aus1)
+C1 = min(x) #C1 = fra1
+C2 = min(x[x!=min(x)]) #C2 = dan1
+C1
+C2
 ```
 
 Group D:
 ```{r}
+ARG = "Argentina"	
+ICE = "Iceland"	
+CRO = "Croatia"	
+NGA = "Nigeria"	
 
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == ARG){ arg1 = i }
+  else if(world_data$Team[i] == ICE){ ice1 = i }
+  else if(world_data$Team[i] == CRO){ cro1 = i }
+  else if(world_data$Team[i] == NGA){ nga1 = i }
+}
+
+x = c(arg1, cro1, nga1, ice1)
+D1 = min(x) #D1 = arg1
+D2 = min(x[x!=min(x)]) #D2 = cro1
+D1
+D2
 ```
 
 Groupd E:
 ```{r}
+BRA = "Brazil"
+SWI = "Switzerland"
+CRI = "Costa Rica"
+SRB = "Serbia"
 
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == BRA){ bra1 = i }
+  else if(world_data$Team[i] == SWI){ swi1 = i }
+  else if(world_data$Team[i] == CRI){ cri1 = i }
+  else if(world_data$Team[i] == SRB){ srb1 = i }
+}
+
+x = c(bra1, srb1, swi1, cri1)
+E1 = min(x) #E1 = bra1
+E2 = min(x[x!=min(x)]) #E2 = srb1
+E1
+E2
 ```
 
 Group F:
 ```{r}
+GER = "Germany"
+MEX = "Mexico"
+SWE = "Sweden"
+KOR = "South Korea"
 
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == GER){ ger1 = i }
+  else if(world_data$Team[i] == MEX){ mex1 = i }
+  else if(world_data$Team[i] == SWE){ swe1 = i }
+  else if(world_data$Team[i] == KOR){ kor1 = i }
+}
+
+x = c(ger1, swe1, mex1, kor1)
+F1 = min(x) #F1 = ger1
+F2 = min(x[x!=min(x)]) #F2 = swe1
+F1
+F2
 ```
 
 Group G:
 ```{r}
+BEL = "Belgium"
+PAN = "Panama"
+TUN = "Tunisia"
+ENG = "England"
 
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == BEL){ bel1 = i }
+  else if(world_data$Team[i] == PAN){ pan1 = i }
+  else if(world_data$Team[i] == TUN){ tun1 = i }
+  else if(world_data$Team[i] == ENG){ eng1 = i }
+}
+
+x = c(eng1, bel1, tun1, pan1)
+G1 = min(x) #F1 = eng1
+G2 = min(x[x!=min(x)]) #F2 = bel1
+G1
+G2
 ```
 
 Group H:
 ```{r}
+POL = "Poland"
+SEN = "Senegal"
+COL = "Colombia"
+JPN = "Japan"
 
+for(i in 1:nrow(world_data)){
+       if(world_data$Team[i] == POL){ pol1 = i }
+  else if(world_data$Team[i] == SEN){ sen1 = i }
+  else if(world_data$Team[i] == COL){ col1 = i }
+  else if(world_data$Team[i] == JPN){ jpn1 = i }
+}
+
+x = c(pol1, col1, jpn1, sen1)
+H1 = min(x) #F1 = pol1
+H2 = min(x[x!=min(x)]) #F2 = col1
+H1
+H2
 ```
 
+This is the knock - out phase 
+
+```{r}
+# 1C vs 2D
+world_data$Team[C1] 
+world_data$Team[D2]
+world_data$Team[min(C1, D2)]
+# 1A vs 2B
+
+# 1B vs 2A
+
+# 1D vs 2C
+
+# 1E vs 2F
+
+# 1G vs 2H
+
+# 1F vs 2E
+
+# 1H vs 2G
+```
