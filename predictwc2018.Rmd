@@ -1,5 +1,6 @@
 ---
 title: "World Cup 2018 prediction"
+Author: Khuong Le
 output: html_document
 ---
 
@@ -24,25 +25,36 @@ check = vector(mode = "numeric", length = nrow(world_data))
 
 ```
 
+
 Function to find top two team that will advance to next ground, this function will compare Avg_GS, Avg_Gc, Pos, Avg_Pts. 
 ```{r}
-groupstage = function(name1, avggs1, avggc1, name2, avggs2, avggc2){
-  score1 = round(max(abs(avggs1), abs(avggc2)) * min(abs(avggs1), abs(avggc2)))
-  score2 = round(max(abs(avggs2), abs(avggc1)) * min(abs(avggs2), abs(avggc1)))
-  
-  if(score1 > score2){ return (name1) }
-  else if(score1 < score2){ return (name2) }
-  else{ return (1) }
+set.seed(20000)
+result = vector(mode = "numeric", length = 4)
+goals = function(name1, avggs1, avggc1, name2, avggs2, avggc2){
+  avg1   = abs(floor((abs(avggs1) + abs(avggc2))/2))
+  avg2   = abs(floor((abs(avggs2) + abs(avggc1))/2))
+  score1 = abs(round(runif(1, avg1-1, avg1+1)))
+  score2 = abs(round(runif(1, avg2-1, avg2+1)))
+  result[1] = name1
+  result[2] = score1
+  result[3] = name2
+  result[4] = score2
+  return(result)
 }
 
+goals("KSA", 3, 2, "URU", 2, 1)
 ```
 
 Group A:
 ```{r}
 RSA = "Russia"
+RSA_pts = 0
 KSA = "Saudi Arabia"
+KSA_pts = 0
 URU = "Uruguay"
+URU_pts = 0
 EGY = "Egypt"
+EGY_pts = 0
 
 for(i in 1:nrow(world_data)){
        if(world_data$Team[i] == RSA){ rsa1 = i }
@@ -51,44 +63,149 @@ for(i in 1:nrow(world_data)){
   else if(world_data$Team[i] == EGY){ egy1 = i }
 }
 
-# Ranking average points that each team earned in previous tournaments
+# Find goals that each team will have in this group stage with goal score = gs, goal concede = gc
+RSA_gs = 0
+RSA_gc = 0
+KSA_gs = 0
+KSA_gc = 0
+EGY_gs = 0
+EGY_gc = 0
+URU_gs = 0
+URU_gc = 0
 
-t1 = world_data$Avg_D[rsa1]
-t2 = world_data$Avg_D[ksa1]
-t3 = world_data$Avg_D[uru1]
-t4 = world_data$Avg_D[egy1]
-
-B1 = min(x) #A1 = esp1
-B2 = min(x[x!=min(x)]) #A2 = por1
-
-matchA = rep(NA)
-matchA[1] = groupstage(RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1], KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1])
-matchA[2] = groupstage(EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1], URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1])
-
-matchA[3] = groupstage(RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1], EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1])
-matchA[4] = groupstage(URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1], KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1])
-
-matchA[5] = groupstage(URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1], RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1])
-matchA[6] = groupstage(KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1], EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1])
-
-matchA
-t1
-t2
-t3
-t4
 ```
 
-1. Russia
-2. Uruguay
-3. Egypt
-4. Saudi Arabia
+
+```{r}
+#1st match 
+resultA1  = goals(RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1], KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1])
+RSA_gs    = RSA_gs + as.numeric(resultA1[2])
+RSA_gc    = RSA_gc + as.numeric(resultA1[4])
+KSA_gs    = KSA_gs + as.numeric(resultA1[4])
+KSA_gc    = KSA_gc + as.numeric(resultA1[2])
+
+if(resultA1[2] > resultA1[4]) {  RSA_pts = RSA_pts + 3 }
+if(resultA1[2] < resultA1[4]) {  KSA_pts = KSA_pts + 3 }
+if(resultA1[2] == resultA1[4]){
+  RSA_pts = RSA_pts + 1
+  KSA_pts = KSA_pts + 1
+}
+#2nd match
+resultA2  = goals(EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1], URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1])
+EGY_gs    = EGY_gs + as.numeric(resultA2[2])
+EGY_gc    = EGY_gc + as.numeric(resultA2[4])
+URU_gs    = URU_gs + as.numeric(resultA2[4])
+URU_gc    = URU_gc + as.numeric(resultA2[2])
+
+if(resultA2[2] > resultA2[4]) { EGY_pts = EGY_pts + 3 }
+if(resultA2[2] < resultA2[4]) { URU_pts = URU_pts + 3 }
+if(resultA2[2] == resultA2[4]){
+  EGY_pts = EGY_pts + 1
+  URU_pts = URU_pts + 1
+}
+#3rd match
+resultA3  = goals(RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1], EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1])
+RSA_gs    = RSA_gs + as.numeric(resultA3[2])
+RSA_gc    = RSA_gc + as.numeric(resultA3[4])
+EGY_gs    = EGY_gs + as.numeric(resultA3[4])
+EGY_gc    = EGY_gc + as.numeric(resultA3[2])
+
+if(resultA3[2] > resultA3[4]) {  RSA_pts = RSA_pts + 3 }
+if(resultA3[2] < resultA3[4]) {  EGY_pts = EGY_pts + 3 }
+if(resultA3[2] == resultA3[4]){
+  RSA_pts = RSA_pts + 1
+  EGY_pts = EGY_pts + 1
+}
+#4th match
+resultA4  = goals(URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1], KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1])
+URU_gs    = URU_gs + as.numeric(resultA4[2])
+URU_gc    = URU_gc + as.numeric(resultA4[4])
+KSA_gs    = KSA_gs + as.numeric(resultA4[4])
+KSA_gc    = KSA_gc + as.numeric(resultA4[2])
+
+if(resultA4[2] > resultA4[4]) {  URU_pts = URU_pts + 3 }
+if(resultA4[2] < resultA4[4]) {  KSA_pts = KSA_pts + 3 }
+if(resultA4[2] == resultA4[4]){
+  URU_pts = URU_pts + 1
+  KSA_pts = KSA_pts + 1
+}
+#5th match
+resultA5  = goals(URU, world_data$Avg_GS[uru1], world_data$Avg_GC[uru1], RSA, world_data$Avg_GS[rsa1], world_data$Avg_GC[rsa1])
+URU_gs    = URU_gs + as.numeric(resultA5[2])
+URU_gc    = URU_gc + as.numeric(resultA5[4])
+RSA_gs    = RSA_gs + as.numeric(resultA5[4])
+RSA_gc    = RSA_gc + as.numeric(resultA5[2])
+
+if(resultA5[2] > resultA5[4]) {  URU_pts = URU_pts + 3 }
+if(resultA5[2] < resultA5[4]) {  RSA_pts = RSA_pts + 3 }
+if(resultA5[2] == resultA5[4]){
+  URU_pts = URU_pts + 1
+  RSA_pts = RSA_pts + 1
+}
+#6th match
+resultA6  = goals(KSA, world_data$Avg_GS[ksa1], world_data$Avg_GC[ksa1], EGY, world_data$Avg_GS[egy1], world_data$Avg_GC[egy1])
+KSA_gs    = KSA_gs + as.numeric(resultA6[2])
+KSA_gc    = KSA_gc + as.numeric(resultA6[4])
+EGY_gs    = EGY_gs + as.numeric(resultA6[4])
+EGY_gc    = EGY_gc + as.numeric(resultA6[2])
+
+if(resultA6[2] > resultA6[4]) {  KSA_pts = KSA_pts + 3 }
+if(resultA6[2] < resultA6[4]) {  EGY_pts = EGY_pts + 3 }
+if(resultA6[2] == resultA6[4]){
+  KSA_pts = KSA_pts + 1
+  EGY_pts = EGY_pts + 1
+}
+
+RSA_di = RSA_gs - RSA_gc
+KSA_di = KSA_gs - KSA_gc
+EGY_di = EGY_gs - EGY_gc
+URU_di = URU_gs - URU_gc
+
+RSA_goal = c(RSA_gs, RSA_gc, RSA_di)
+KSA_goal = c(KSA_gs, KSA_gc, KSA_di)
+EGY_goal = c(EGY_gs, EGY_gc, EGY_di)
+URU_goal = c(URU_gs, URU_gc, URU_di)
+
+resA   = data.frame (resultA1, resultA2, resultA3, resultA4, resultA5, resultA6)
+resA
+```
+
+Setup the position
+```{r}
+teamA     = c(RSA, URU, EGY, KSA)
+teamA_pts = c(RSA_pts, URU_pts, EGY_pts, KSA_pts)
+teamA_gs  = c(RSA_gs, URU_gs, EGY_gs, KSA_gs)
+teamA_gc  = c(RSA_gc, URU_gc, EGY_gc, KSA_gc)
+teamA_di  = c(RSA_di, URU_di, EGY_di, KSA_di)
+groupA    = data.frame (teamA, teamA_gs, teamA_gc, teamA_di, teamA_pts)
+
+finalA = groupA[order(groupA$teamA_pts, decreasing = TRUE),]
+rownames(finalA)[1] <- "1st"
+rownames(finalA)[2] <- "2nd"
+rownames(finalA)[3] <- "3rd"
+rownames(finalA)[4] <- "4th"
+finalA
+```
+
+These two teams qualify for the next round
+```{r}
+qualA1 = finalA[1,]
+qualA2 = finalA[2,]
+qualA1
+qualA2
+```
+
 
 Group B:
 ```{r}
-POR = "Portugal"	
-ESP = "Spain"	
+POR = "Portugal"
+POR_pts = 0
+ESP = "Spain"
+ESP_pts = 0
 MAR = "Morocco"	
+MAR_pts = 0
 IRI = "Iran" 	
+IRI_pts = 0
 
 for(i in 1:nrow(world_data)){
        if(world_data$Team[i] == POR){ por1 = i }
@@ -96,64 +213,290 @@ for(i in 1:nrow(world_data)){
   else if(world_data$Team[i] == MAR){ mar1 = i }
   else if(world_data$Team[i] == IRI){ iri1 = i }
 }
+# Find goals that each team will have in this group stage with goal score = gs, goal concede = gc
+POR_gs = 0
+POR_gc = 0
+ESP_gs = 0
+ESP_gc = 0
+MAR_gs = 0
+MAR_gc = 0
+IRI_gs = 0
+IRI_gc = 0
 
-# Ranking average points that each team earned in previous tournaments
-
-t1 = world_data$Avg_D[por1]
-t2 = world_data$Avg_D[esp1]
-t3 = world_data$Avg_D[mar1]
-t4 = world_data$Avg_D[iri1]
-
-
-matchB = rep(NA)
-matchB[1] = groupstage(MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1], IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1])
-matchB[2] = groupstage(POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1], ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1])
-
-matchB[3] = groupstage(POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1], MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1])
-matchB[4] = groupstage(IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1], ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1])
-
-matchB[5] = groupstage(ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1], MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1])
-matchB[6] = groupstage(IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1], POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1])
-
-matchB
-t1
-t2
-t3
-t4
 ```
 
-1. Portugal
-2. Spain
-3. Morocco
-4. Iran
+```{r}
+#1st match
+resultB1  = goals(MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1], IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1])
+MAR_gs    = MAR_gs + as.numeric(resultB1[2])
+MAR_gc    = MAR_gc + as.numeric(resultB1[4])
+IRI_gs    = IRI_gs + as.numeric(resultB1[4])
+IRI_gc    = IRI_gc + as.numeric(resultB1[2])
+
+if(resultB1[2] > resultB1[4]) {  MAR_pts = MAR_pts + 3 }
+if(resultB1[2] < resultB1[4]) {  IRI_pts = IRI_pts + 3 }
+if(resultB1[2] == resultB1[4]){
+  MAR_pts = MAR_pts + 1
+  IRI_pts = IRI_pts + 1
+}
+#2nd match
+resultB2  = goals(POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1], ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1])
+POR_gs    = POR_gs + as.numeric(resultB2[2])
+POR_gc    = POR_gc + as.numeric(resultB2[4])
+ESP_gs    = ESP_gs + as.numeric(resultB2[4])
+ESP_gc    = ESP_gc + as.numeric(resultB2[2])
+
+if(resultB2[2] > resultB2[4]) {  POR_pts = POR_pts + 3 }
+if(resultB2[2] < resultB2[4]) {  ESP_pts = ESP_pts + 3 }
+if(resultB2[2] == resultB2[4]){
+  POR_pts = POR_pts + 1
+  ESP_pts = ESP_pts + 1
+}
+#3rd match
+resultB3  = goals(POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1], MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1])
+POR_gs    = POR_gs + as.numeric(resultB3[2])
+POR_gc    = POR_gc + as.numeric(resultB3[4])
+MAR_gs    = MAR_gs + as.numeric(resultB3[4])
+MAR_gc    = MAR_gc + as.numeric(resultB3[2])
+if(resultB3[2] > resultB3[4]) {  POR_pts = POR_pts + 3 }
+if(resultB3[2] < resultB3[4]) {  MAR_pts = MAR_pts + 3 }
+if(resultB3[2] == resultB3[4]){
+  POR_pts = POR_pts + 1
+  MAR_pts = MAR_pts + 1
+}
+#4th match
+resultB4  = goals(IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1], ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1])
+IRI_gs    = IRI_gs + as.numeric(resultB4[2])
+IRI_gc    = IRI_gc + as.numeric(resultB4[4])
+ESP_gs    = ESP_gs + as.numeric(resultB4[4])
+ESP_gc    = ESP_gc + as.numeric(resultB4[2])
+if(resultB4[2] > resultB4[4]) {  IRI_pts = IRI_pts + 3 }
+if(resultB4[2] < resultB4[4]) {  ESP_pts = ESP_pts + 3 }
+if(resultB4[2] == resultB4[4]){
+  ESP_pts = ESP_pts + 1
+  IRI_pts = IRI_pts + 1
+}
+#5th match
+resultB5  = goals(ESP, world_data$Avg_GS[esp1], world_data$Avg_GC[esp1], MAR, world_data$Avg_GS[mar1], world_data$Avg_GC[mar1])
+ESP_gs    = ESP_gs + as.numeric(resultB5[2])
+ESP_gc    = ESP_gc + as.numeric(resultB5[4])
+MAR_gs    = MAR_gs + as.numeric(resultB5[4])
+MAR_gc    = MAR_gc + as.numeric(resultB5[2])
+if(resultB5[2] > resultB5[4]) {  ESP_pts = ESP_pts + 3 }
+if(resultB5[2] < resultB5[4]) {  MAR_pts = MAR_pts + 3 }
+if(resultB5[2] == resultB5[4]){
+  MAR_pts = MAR_pts + 1
+  ESP_pts = ESP_pts + 1
+}
+#6th match
+resultB6  = goals(IRI, world_data$Avg_GS[iri1], world_data$Avg_GC[iri1], POR, world_data$Avg_GS[por1], world_data$Avg_GC[por1])
+IRI_gs    = IRI_gs + as.numeric(resultB6[2])
+IRI_gc    = IRI_gc + as.numeric(resultB6[4])
+POR_gs    = POR_gs + as.numeric(resultB6[4])
+POR_gc    = POR_gc + as.numeric(resultB6[2])
+if(resultB6[2] > resultB6[4]) {  IRI_pts = IRI_pts + 3 }
+if(resultB6[2] < resultB6[4]) {  POR_pts = POR_pts + 3 }
+if(resultB6[2] == resultB6[4]){
+  POR_pts = POR_pts + 1
+  IRI_pts = IRI_pts + 1
+}
+POR_di = POR_gs - POR_gc
+ESP_di = ESP_gs - ESP_gc
+MAR_di = MAR_gs - MAR_gc
+IRI_di = IRI_gs - IRI_gc
+
+POR_goal = c(POR_gs, POR_gc, POR_di)
+ESP_goal = c(ESP_gs, ESP_gc, ESP_di)
+MAR_goal = c(MAR_gs, MAR_gc, MAR_di)
+IRI_goal = c(IRI_gs, IRI_gc, IRI_di)
+
+resB   = data.frame (resultB1, resultB2, resultB3, resultB4, resultB5, resultB6)
+resB
+```
+
+Set up to see the result table in group B
+```{r}
+#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
+
+teamB     = c(POR, ESP, MAR, IRI)
+teamB_pts = c(POR_pts, ESP_pts, MAR_pts, IRI_pts)
+teamB_gs  = c(POR_gs, ESP_gs, MAR_gs, IRI_gs)
+teamB_gc  = c(POR_gc, ESP_gc, MAR_gc, IRI_gc)
+teamB_di  = c(POR_di, ESP_di, MAR_di, IRI_di)
+groupB    = data.frame (teamB, teamB_gs, teamB_gc, teamB_di, teamB_pts)
+
+finalB = groupB[order(groupB$teamB_pts, decreasing = TRUE),]
+rownames(finalB)[1] <- "1st"
+rownames(finalB)[2] <- "2nd"
+rownames(finalB)[3] <- "3rd"
+rownames(finalB)[4] <- "4th"
+
+finalB
+```
+
+These two teams qualify for the next round
+```{r}
+qualB1 = finalB[1,]
+qualB2 = finalB[2,]
+qualB1
+qualB2
+```
 
 Group C:
 ```{r}
 FRA = "France"
+FRA_pts = 0
 AUS = "Australia"
+AUS_pts = 0
 PER = "Peru"	
+PER_pts = 0
 DAN = "Denmark"	
-
+DAN_pts = 0
 for(i in 1:nrow(world_data)){
        if(world_data$Team[i] == FRA){ fra1 = i }
   else if(world_data$Team[i] == AUS){ aus1 = i }
   else if(world_data$Team[i] == PER){ per1 = i }
   else if(world_data$Team[i] == DAN){ dan1 = i }
 }
+# Find goals that each team will have in this group_stage with goal score = gs, goal concede = gc
+FRA_gs = 0
+FRA_gc = 0
+AUS_gs = 0
+AUS_gc = 0
+PER_gs = 0
+PER_gc = 0
+DAN_gs = 0
+DAN_gc = 0
 
-x = c(fra1, dan1, per1, aus1)
-C1 = min(x) #C1 = fra1
-C2 = min(x[x!=min(x)]) #C2 = dan1
-C1
-C2
+```
+
+```{r}
+#1st match
+resultC1  = goals(FRA, world_data$Avg_GS[fra1], world_data$Avg_GC[fra1], AUS, world_data$Avg_GS[aus1], world_data$Avg_GC[aus1])
+FRA_gs    = FRA_gs + as.numeric(resultC1[2])
+FRA_gc    = FRA_gc + as.numeric(resultC1[4])
+AUS_gs    = AUS_gs + as.numeric(resultC1[4])
+AUS_gc    = AUS_gc + as.numeric(resultC1[2])
+
+if(resultC1[2] > resultC1[4]) {  FRA_pts = FRA_pts + 3 }
+if(resultC1[2] < resultC1[4]) {  AUS_pts = AUS_pts + 3 }
+if(resultC1[2] == resultC1[4]){
+  FRA_pts = FRA_pts + 1
+  AUS_pts = AUS_pts + 1
+}
+#2nd match
+resultC2  = goals(PER, world_data$Avg_GS[per1], world_data$Avg_GC[per1], DAN, world_data$Avg_GS[dan1], world_data$Avg_GC[dan1])
+PER_gs    = PER_gs + as.numeric(resultC2[2])
+PER_gc    = PER_gc + as.numeric(resultC2[4])
+DAN_gs    = DAN_gs + as.numeric(resultC2[4])
+DAN_gc    = DAN_gc + as.numeric(resultC2[2])
+
+if(resultC2[2] > resultC2[4]) {  PER_pts = PER_pts + 3 }
+if(resultC2[2] < resultC2[4]) {  DAN_pts = DAN_pts + 3 }
+if(resultC2[2] == resultC2[4]){
+  PER_pts = PER_pts + 1
+  DAN_pts = DAN_pts + 1
+}
+#3rd match
+resultC3  = goals(DAN, world_data$Avg_GS[dan1], world_data$Avg_GC[dan1], AUS, world_data$Avg_GS[aus1], world_data$Avg_GC[aus1])
+DAN_gs    = DAN_gs + as.numeric(resultC3[2])
+DAN_gc    = DAN_gc + as.numeric(resultC3[4])
+AUS_gs    = AUS_gs + as.numeric(resultC3[4])
+AUS_gc    = AUS_gc + as.numeric(resultC3[2])
+if(resultC3[2] > resultC3[4]) {  DAN_pts = DAN_pts + 3 }
+if(resultC3[2] < resultC3[4]) {  AUS_pts = AUS_pts + 3 }
+if(resultC3[2] == resultC3[4]){
+  DAN_pts = DAN_pts + 1
+  AUS_pts = AUS_pts + 1
+}
+#4th match
+resultC4  = goals(FRA, world_data$Avg_GS[fra1], world_data$Avg_GC[fra1], PER, world_data$Avg_GS[per1], world_data$Avg_GC[per1])
+FRA_gs    = FRA_gs + as.numeric(resultC4[2])
+FRA_gc    = FRA_gc + as.numeric(resultC4[4])
+PER_gs    = PER_gs + as.numeric(resultC4[4])
+PER_gc    = PER_gc + as.numeric(resultC4[2])
+if(resultC4[2] > resultC4[4]) {  FRA_pts = FRA_pts + 3 }
+if(resultC4[2] < resultC4[4]) {  PER_pts = PER_pts + 3 }
+if(resultC4[2] == resultC4[4]){
+  FRA_pts = FRA_pts + 1
+  PER_pts = PER_pts + 1
+}
+#5th match
+resultC5  = goals(DAN, world_data$Avg_GS[dan1], world_data$Avg_GC[dan1], FRA, world_data$Avg_GS[fra1], world_data$Avg_GC[fra1])
+DAN_gs    = DAN_gs + as.numeric(resultC5[2])
+DAN_gc    = DAN_gc + as.numeric(resultC5[4])
+FRA_gs    = FRA_gs + as.numeric(resultC5[4])
+FRA_gc    = FRA_gc + as.numeric(resultC5[2])
+if(resultC5[2] > resultC5[4]) {  DAN_pts = DAN_pts + 3 }
+if(resultC5[2] < resultC5[4]) {  FRA_pts = FRA_pts + 3 }
+if(resultC5[2] == resultC5[4]){
+  FRA_pts = FRA_pts + 1
+  DAN_pts = DAN_pts + 1
+}
+#6th match
+resultC6  = goals(AUS, world_data$Avg_GS[aus1], world_data$Avg_GC[aus1], PER, world_data$Avg_GS[per1], world_data$Avg_GC[per1])
+AUS_gs    = AUS_gs + as.numeric(resultC6[2])
+AUS_gc    = AUS_gc + as.numeric(resultC6[4])
+PER_gs    = PER_gs + as.numeric(resultC6[4])
+PER_gc    = PER_gc + as.numeric(resultC6[2])
+if(resultC6[2] > resultC6[4]) {  AUS_pts = AUS_pts + 3 }
+if(resultC6[2] < resultC6[4]) {  PER_pts = PER_pts + 3 }
+if(resultC6[2] == resultC6[4]){
+  AUS_pts = AUS_pts + 1
+  PER_pts = PER_pts + 1
+}
+FRA_di = FRA_gs - FRA_gc
+AUS_di = AUS_gs - AUS_gc
+PER_di = PER_gs - PER_gc
+DAN_di = DAN_gs - DAN_gc
+
+FRA_goal = c(FRA_gs, FRA_gc, FRA_di)
+AUS_goal = c(AUS_gs, AUS_gc, AUS_di)
+PER_goal = c(PER_gs, PER_gc, PER_di)
+DAN_goal = c(DAN_gs, DAN_gc, DAN_di)
+
+resC   = data.frame (resultC1, resultC2, resultC3, resultC4, resultC5, resultC6)
+resC
+```
+
+Set up to see the result table in group B
+```{r}
+#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
+
+teamC     = c(FRA, AUS, PER, DAN)
+teamC_pts = c(FRA_pts,AUS_pts, PER_pts, DAN_pts)
+teamC_gs  = c(FRA_gs, AUS_gs, PER_gs, DAN_gs)
+teamC_gc  = c(FRA_gc, AUS_gc, PER_gc, DAN_gc)
+teamC_di  = c(FRA_di, AUS_di, PER_di, DAN_di)
+groupC    = data.frame(teamC, teamC_gs, teamC_gc, teamC_di, teamC_pts)
+
+finalC = groupC[order(groupC$teamC_pts, decreasing = TRUE),]
+rownames(finalC)[1] <- "1st"
+rownames(finalC)[2] <- "2nd"
+rownames(finalC)[3] <- "3rd"
+rownames(finalC)[4] <- "4th"
+
+finalC
+```
+
+These two teams qualify for the next round
+```{r}
+qualC1 = finalC[1,]
+qualC2 = finalC[2,]
+qualC1
+qualC2
 ```
 
 Group D:
 ```{r}
-ARG = "Argentina"	
+ARG = "Argentina"
+ARG_pts = 0
 ICE = "Iceland"	
+ICE_pts = 0
 CRO = "Croatia"	
+CRO_pts = 0
 NGA = "Nigeria"	
+NGA_pts = 0
 
 for(i in 1:nrow(world_data)){
        if(world_data$Team[i] == ARG){ arg1 = i }
@@ -161,12 +504,127 @@ for(i in 1:nrow(world_data)){
   else if(world_data$Team[i] == CRO){ cro1 = i }
   else if(world_data$Team[i] == NGA){ nga1 = i }
 }
+# Find goals that each team will have in this group_stage with goal score = gs, goal concede = gc
+ARG_gs = 0
+ARG_gc = 0
+ICE_gs = 0
+ICE_gc = 0
+CRO_gs = 0
+CRO_gc = 0
+NGA_gs = 0
+NGA_gc = 0
 
-x = c(arg1, cro1, nga1, ice1)
-D1 = min(x) #D1 = arg1
-D2 = min(x[x!=min(x)]) #D2 = cro1
-D1
-D2
+```
+
+```{r}
+#1st match
+resultD1  = goals(ARG, world_data$Avg_GS[arg1], world_data$Avg_GC[arg1], ICE, world_data$Avg_GS[ice1], world_data$Avg_GC[ice1])
+ARG_gs    = ARG_gs + as.numeric(resultD1[2])
+ARG_gc    = ARG_gc + as.numeric(resultD1[4])
+ICE_gs    = ICE_gs + as.numeric(resultD1[4])
+ICE_gc    = ICE_gc + as.numeric(resultD1[2])
+if(resultD1[2] > resultD1[4]) {  ARG_pts = ARG_pts + 3 }
+if(resultD1[2] < resultD1[4]) {  ICE_pts = ICE_pts + 3 }
+if(resultD1[2] == resultD1[4]){
+  ARG_pts = ARG_pts + 1
+  ICE_pts = ICE_pts + 1
+}
+#2nd match
+resultD2  = goals(CRO, world_data$Avg_GS[cro1], world_data$Avg_GC[cro1], NGA, world_data$Avg_GS[nga1], world_data$Avg_GC[nga1])
+CRO_gs    = CRO_gs + as.numeric(resultD2[2])
+CRO_gc    = CRO_gc + as.numeric(resultD2[4])
+NGA_gs    = NGA_gs + as.numeric(resultD2[4])
+NGA_gc    = NGA_gc + as.numeric(resultD2[2])
+
+if(resultD2[2] > resultD2[4]) {  CRO_pts = CRO_pts + 3 }
+if(resultD2[2] < resultD2[4]) {  NGA_pts = NGA_pts + 3 }
+if(resultD2[2] == resultD2[4]){
+  CRO_pts = CRO_pts + 1
+  NGA_pts = NGA_pts + 1
+}
+#3rd match
+resultD3  = goals(ARG, world_data$Avg_GS[arg1], world_data$Avg_GC[arg1], CRO, world_data$Avg_GS[cro1], world_data$Avg_GC[cro1])
+ARG_gs    = ARG_gs + as.numeric(resultD3[2])
+ARG_gc    = ARG_gc + as.numeric(resultD3[4])
+CRO_gs    = CRO_gs + as.numeric(resultD3[4])
+CRO_gc    = CRO_gc + as.numeric(resultD3[2])
+
+if(resultD3[2] > resultD3[4]) {  ARG_pts = ARG_pts + 3 }
+if(resultD3[2] < resultD3[4]) {  CRO_pts = CRO_pts + 3 }
+if(resultD3[2] == resultD3[4]){
+  ARG_pts = ARG_pts + 1
+  CRO_pts = CRO_pts + 1
+}
+#4th match
+resultD4  = goals(NGA, world_data$Avg_GS[nga1], world_data$Avg_GC[nga1], ICE, world_data$Avg_GS[ice1], world_data$Avg_GC[ice1])
+NGA_gs    = NGA_gs + as.numeric(resultD4[2])
+NGA_gc    = NGA_gc + as.numeric(resultD4[4])
+ICE_gs    = ICE_gs + as.numeric(resultD4[4])
+ICE_gc    = ICE_gc + as.numeric(resultD4[2])
+if(resultD4[2] > resultD4[4]) {  NGA_pts = NGA_pts + 3 }
+if(resultD4[2] < resultD4[4]) {  ICE_pts = ICE_pts + 3 }
+if(resultD4[2] == resultD4[4]){
+  NGA_pts = NGA_pts + 1
+  ICE_pts = ICE_pts + 1
+}
+#5th match
+resultD5  = goals(NGA, world_data$Avg_GS[nga1], world_data$Avg_GC[nga1], ARG, world_data$Avg_GS[arg1], world_data$Avg_GC[arg1])
+NGA_gs    = NGA_gs + as.numeric(resultD5[2])
+NGA_gc    = NGA_gc + as.numeric(resultD5[4])
+ARG_gs    = ARG_gs + as.numeric(resultD5[4])
+ARG_gc    = ARG_gc + as.numeric(resultD5[2])
+
+if(resultD5[2] > resultD5[4]) {  NGA_pts = NGA_pts + 3 }
+if(resultD5[2] < resultD5[4]) {  ARG_pts = ARG_pts + 3 }
+if(resultD5[2] == resultD5[4]){
+  NGA_pts = NGA_pts + 1
+  ARG_pts = ARG_pts + 1
+}
+#6th match
+resultD6  = goals(ICE, world_data$Avg_GS[ice1], world_data$Avg_GC[ice1], CRO, world_data$Avg_GS[cro1], world_data$Avg_GC[cro1])
+ICE_gs    = ICE_gs + as.numeric(resultD6[2])
+ICE_gc    = ICE_gc + as.numeric(resultD6[4])
+CRO_gs    = CRO_gs + as.numeric(resultD6[4])
+CRO_gc    = CRO_gc + as.numeric(resultD6[2])
+
+if(resultD6[2] > resultD6[4]) {  ICE_pts = ICE_pts + 3 }
+if(resultD6[2] < resultD6[4]) {  CRO_pts = CRO_pts + 3 }
+if(resultD6[2] == resultD6[4]){
+  ICE_pts = ICE_pts + 1
+  CRO_pts = CRO_pts + 1
+}
+ARG_di = ARG_gs - ARG_gc
+ICE_di = ICE_gs - ICE_gc
+CRO_di = CRO_gs - CRO_gc
+NGA_di = NGA_gs - NGA_gc
+
+ARG_goal = c(ARG_gs, ARG_gc, ARG_di)
+ICE_goal = c(ICE_gs, ICE_gc, ICE_di)
+CRO_goal = c(CRO_gs, CRO_gc, CRO_di)
+NGA_goal = c(NGA_gs, NGA_gc, NGA_di)
+
+resD   = data.frame (resultD1, resultD2, resultD3, resultD4, resultD5, resultD6)
+resD
+```
+
+Set up to see the result table in group B
+```{r}
+#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
+
+teamD     = c(ARG, ICE, CRO, NGA)
+teamD_pts = c(ARG_pts,ICE_pts, CRO_pts, NGA_pts)
+teamD_gs  = c(ARG_gs, ICE_gs, CRO_gs, NGA_gs)
+teamD_gc  = c(ARG_gc, ICE_gc, CRO_gc, NGA_gc)
+teamD_di  = c(ARG_di, ICE_di, CRO_di, NGA_di)
+groupD    = data.frame(teamD, teamD_gs, teamD_gc, teamD_di, teamD_pts)
+
+finalD = groupD[order(groupD$teamD_pts, decreasing = TRUE),]
+rownames(finalD)[1] <- "1st"
+rownames(finalD)[2] <- "2nd"
+rownames(finalD)[3] <- "3rd"
+rownames(finalD)[4] <- "4th"
+
+finalD
 ```
 
 Groupd E:
@@ -183,19 +641,18 @@ for(i in 1:nrow(world_data)){
   else if(world_data$Team[i] == SRB){ srb1 = i }
 }
 
-x = c(bra1, srb1, swi1, cri1)
-E1 = min(x) #E1 = bra1
-E2 = min(x[x!=min(x)]) #E2 = srb1
-E1
-E2
 ```
 
 Group F:
 ```{r}
 GER = "Germany"
+GER_pts = 0
 MEX = "Mexico"
+MEX_pts = 0
 SWE = "Sweden"
+SWE_pts = 0
 KOR = "South Korea"
+KOR_pts = 0
 
 for(i in 1:nrow(world_data)){
        if(world_data$Team[i] == GER){ ger1 = i }
@@ -203,12 +660,129 @@ for(i in 1:nrow(world_data)){
   else if(world_data$Team[i] == SWE){ swe1 = i }
   else if(world_data$Team[i] == KOR){ kor1 = i }
 }
+GER_gs = 0
+GER_gc = 0
+SWE_gs = 0
+SWE_gc = 0
+KOR_gs = 0
+KOR_gc = 0
+MEX_gs = 0
+MEX_gc = 0
+```
 
-x = c(ger1, swe1, mex1, kor1)
-F1 = min(x) #F1 = ger1
-F2 = min(x[x!=min(x)]) #F2 = swe1
-F1
-F2
+```{r}
+#1st match
+resultF1  = goals(GER, world_data$Avg_GS[ger1], world_data$Avg_GC[ger1], MEX, world_data$Avg_GS[mex1], world_data$Avg_GC[mex1])
+GER_gs    = GER_gs + as.numeric(resultF1[2])
+GER_gc    = GER_gc + as.numeric(resultF1[4])
+MEX_gs    = MEX_gs + as.numeric(resultF1[4])
+MEX_gc    = GER_gc + as.numeric(resultF1[2])
+if(resultF1[2] > resultF1[4]) {  GER_pts = GER_pts + 3 }
+if(resultF1[2] < resultF1[4]) {  MEX_pts = MEX_pts + 3 }
+if(resultF1[2] == resultF1[4]){
+  GER_pts = GER_pts + 1
+  MEX_pts = MEX_pts + 1
+}
+#2nd match
+resultF2  = goals(SWE, world_data$Avg_GS[swe1], world_data$Avg_GC[swe1], KOR, world_data$Avg_GS[kor1], world_data$Avg_GC[kor1])
+SWE_gs    = SWE_gs + as.numeric(resultF2[2])
+SWE_gc    = SWE_gc + as.numeric(resultF2[4])
+KOR_gs    = KOR_gs + as.numeric(resultF2[4])
+KOR_gc    = KOR_gc + as.numeric(resultF2[2])
+if(resultF2[2] > resultF2[4]) {  SWE_pts = SWE_pts + 3 }
+if(resultF2[2] < resultF2[4]) {  KOR_pts = KOR_pts + 3 }
+if(resultF2[2] == resultF2[4]){
+  SWE_pts = SWE_pts + 1
+  KOR_pts = KOR_pts + 1
+}
+#3rd match
+resultF3  = goals(KOR, world_data$Avg_GS[kor1], world_data$Avg_GC[kor1], MEX, world_data$Avg_GS[mex1], world_data$Avg_GC[mex1])
+KOR_gs    = KOR_gs + as.numeric(resultF3[2])
+KOR_gc    = KOR_gc + as.numeric(resultF3[4])
+MEX_gs    = MEX_gs + as.numeric(resultF3[4])
+MEX_gc    = MEX_gc + as.numeric(resultF3[2])
+if(resultF3[2] > resultF3[4]) {  KOR_pts = KOR_pts + 3 }
+if(resultF3[2] < resultF3[4]) {  MEX_pts = MEX_pts + 3 }
+if(resultF3[2] == resultF3[4]){
+  KOR_pts = KOR_pts + 1
+  MEX_pts = MEX_pts + 1
+}
+#4th match
+resultF4  = goals(GER, world_data$Avg_GS[ger1], world_data$Avg_GC[ger1], SWE, world_data$Avg_GS[swe1], world_data$Avg_GC[swe1])
+GER_gs    = GER_gs + as.numeric(resultF4[2])
+GER_gc    = GER_gc + as.numeric(resultF4[4])
+SWE_gs    = SWE_gs + as.numeric(resultF4[4])
+SWE_gc    = SWE_gc + as.numeric(resultF4[2])
+if(resultF4[2] > resultF4[4]) {  GER_pts = GER_pts + 3 }
+if(resultF4[2] < resultF4[4]) {  SWE_pts = SWE_pts + 3 }
+if(resultF4[2] == resultF4[4]){
+  GER_pts = GER_pts + 1
+  SWE_pts = SWE_pts + 1
+}
+#5th match
+resultF5  = goals(KOR, world_data$Avg_GS[kor1], world_data$Avg_GC[kor1], GER, world_data$Avg_GS[ger1], world_data$Avg_GC[ger1])
+KOR_gs    = KOR_gs + as.numeric(resultF5[2])
+KOR_gc    = KOR_gc + as.numeric(resultF5[4])
+GER_gs    = GER_gs + as.numeric(resultF5[4])
+GER_gc    = GER_gc + as.numeric(resultF5[2])
+if(resultF5[2] > resultF5[4]) {  KOR_pts = KOR_pts + 3 }
+if(resultF5[2] < resultF5[4]) {  GER_pts = GER_pts + 3 }
+if(resultF5[2] == resultF5[4]){
+  KOR_pts = KOR_pts + 1
+  GER_pts = GER_pts + 1
+}
+#6th match
+resultF6  = goals(MEX, world_data$Avg_GS[mex1], world_data$Avg_GC[mex1], SWE, world_data$Avg_GS[swe1], world_data$Avg_GC[swe1])
+MEX_gs    = MEX_gs + as.numeric(resultF6[2])
+MEX_gc    = MEX_gc + as.numeric(resultF6[4])
+SWE_gs    = SWE_gs + as.numeric(resultF6[4])
+SWE_gc    = SWE_gc + as.numeric(resultF6[2])
+if(resultF6[2] > resultF6[4]) {  MEX_pts = MEX_pts + 3 }
+if(resultF6[2] < resultF6[4]) {  SWE_pts = SWE_pts + 3 }
+if(resultF6[2] == resultF6[4]){
+  MEX_pts = MEX_pts + 1
+  SWE_pts = SWE_pts + 1
+}
+
+GER_di = GER_gs - GER_gc
+SWE_di = SWE_gs - SWE_gc
+MEX_di = MEX_gs - MEX_gc
+KOR_di = KOR_gs - KOR_gc
+
+GER_goal = c(GER_gs, GER_gc, GER_di)
+SWE_goal = c(SWE_gs, SWE_gc, SWE_di)
+MEX_goal = c(MEX_gs, MEX_gc, MEX_di)
+KOR_goal = c(KOR_gs, KOR_gc, KOR_di)
+
+resF   = data.frame (resultF1, resultF2, resultF3, resultF4, resultF5, resultF6)
+resF
+```
+
+Set up to see the result table in group F
+```{r}
+#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
+teamF     = c(GER, SWE, MEX, KOR)
+teamF_pts = c(GER_pts, SWE_pts, MEX_pts, KOR_pts)
+teamF_gs  = c(GER_gs, SWE_gs, MEX_gs, KOR_gs)
+teamF_gc  = c(GER_gc, SWE_gc, MEX_gc, KOR_gc)
+teamF_di  = c(GER_di, SWE_di, MEX_di, KOR_di)
+groupF   = data.frame (teamF, teamF_gs, teamF_gc, teamF_di, teamF_pts)
+
+finalF = groupF[order(groupF$teamF_pts, decreasing = TRUE),]
+rownames(finalF)[1] = "1st"
+rownames(finalF)[2] = "2nd"
+rownames(finalF)[3] = "3rd"
+rownames(finalF)[4] = "4th"
+
+finalF
+```
+
+These two teams qualify for the next round
+```{r}
+qualF1 = finalF[1,]
+qualF2 = finalF[2,]
+qualF1
+qualF2
 ```
 
 Group G:
@@ -257,13 +831,14 @@ This is the knock - out phase
 
 ```{r}
 # 1C vs 2D
-world_data$Team[C1] 
-world_data$Team[D2]
-world_data$Team[min(C1, D2)]
+
 # 1A vs 2B
+#qualA1
+#qualB2
 
 # 1B vs 2A
-
+#qualB1
+#qualA2
 # 1D vs 2C
 
 # 1E vs 2F
