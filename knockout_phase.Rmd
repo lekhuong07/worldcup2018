@@ -1,0 +1,25 @@
+---
+title: "knock_outphase"
+output: html_document
+author: "Khuong Le"
+---
+
+```{r}
+pkg_list = c("ggplot2", "stringr", "rvest", "tidyr", "dplyr", "gsubfn")
+mia_pkgs = pkg_list[!(pkg_list %in% installed.packages()[,"Package"])]
+if(length(mia_pkgs) > 0) install.packages(mia_pkgs)
+loaded_pkgs = lapply(pkg_list, require, character.only=TRUE)
+```
+
+Using data from wikipedia from Worldcup 1998, 2002, 2006, 2010, 2014 mainly from wikipedia.
+
+Wiki from World Cup history
+```{r}
+quiz_list = list(
+  x = c(1, 2),
+  y = "Hello Quiz Taker",
+  z = "z"
+)
+quiz_list["3"]
+```
+
