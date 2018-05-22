@@ -15,11 +15,7 @@ Using data from wikipedia from Worldcup 1998, 2002, 2006, 2010, 2014 mainly from
 
 Wiki from World Cup history
 ```{r}
-quiz_list = list(
-  x = c(1, 2),
-  y = "Hello Quiz Taker",
-  z = "z"
-)
-quiz_list["3"]
+kophase = read.csv("ko.csv")
+kophase
 ```
 

@@ -1274,7 +1274,7 @@ Match56 = data.frame(qualH1,qualG2)
 Reach knock-out phase 
 ```{r}
 ko = data.frame(Match49, Match50, Match51, Match52, Match53, Match54, Match55, Match56)
-write.csv(ko, file = "ko.csv")
+write.csv(ko, file = "ko1.csv")
 #kophase = read.csv("ko.csv")
 #kophase
 ```
