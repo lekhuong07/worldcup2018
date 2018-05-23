@@ -1308,7 +1308,9 @@ Match52
 ```
 
 Semifinals 1: Win 57 vs Win 58
+```{r}
 
+```
 Semifinals 2: Win 59  vs Win 60
 
 Runner - up: Lose SF1 vs Lose SF2

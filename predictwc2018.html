@@ -199,7 +199,7 @@ goals = function(name1, avggs1, avggc1, pot1, name2, avggs2, avggc2, pot2){
 }
 
 rand_goals(1,2)</code></pre>
-<pre><code>## [1] 0</code></pre>
+<pre><code>## [1] 1</code></pre>
 <p>Group A:</p>
 <pre class="r"><code>RSA = &quot;Russia&quot;
 RSA_pts = 0
@@ -272,9 +272,9 @@ resA   = data.frame (resultA1, resultA2, resultA3, resultA4, resultA5, resultA6)
 resA</code></pre>
 <pre><code>##       resultA1 resultA2 resultA3     resultA4 resultA5     resultA6
 ## 1       Russia    Egypt   Russia      Uruguay  Uruguay Saudi Arabia
-## 2            5        2        4            5        2            1
+## 2            2        2        2            2        3            1
 ## 3 Saudi Arabia  Uruguay    Egypt Saudi Arabia   Russia        Egypt
-## 4            1        2        1            1        3            2</code></pre>
+## 4            1        2        1            2        2            3</code></pre>
 <p>Calculate points each team earns.</p>
 <pre class="r"><code>if(resultA1[2] &gt; resultA1[4]) {  RSA_pts = RSA_pts + 3 }
 if(resultA1[2] &lt; resultA1[4]) {  KSA_pts = KSA_pts + 3 }
@@ -337,19 +337,19 @@ rownames(finalA)[3] &lt;- &quot;3rd&quot;
 rownames(finalA)[4] &lt;- &quot;4th&quot;
 finalA</code></pre>
 <pre><code>##            teamA teamA_gs teamA_gc teamA_di teamA_pts
-## 1st       Russia       12        4        8         9
-## 2nd      Uruguay        9        6        3         4
-## 3rd        Egypt        5        7       -2         4
-## 4th Saudi Arabia        3       12       -9         0</code></pre>
+## 1st       Russia        6        5        1         6
+## 2nd      Uruguay        7        6        1         5
+## 3rd        Egypt        6        5        1         4
+## 4th Saudi Arabia        4        7       -3         1</code></pre>
 <p>These two teams qualify for the next round</p>
 <pre class="r"><code>qualA1 = finalA[1,]
 qualA2 = finalA[2,]
 qualA1</code></pre>
 <pre><code>##      teamA teamA_gs teamA_gc teamA_di teamA_pts
-## 1st Russia       12        4        8         9</code></pre>
+## 1st Russia        6        5        1         6</code></pre>
 <pre class="r"><code>qualA2</code></pre>
 <pre><code>##       teamA teamA_gs teamA_gc teamA_di teamA_pts
-## 2nd Uruguay        9        6        3         4</code></pre>
+## 2nd Uruguay        7        6        1         5</code></pre>
 <p>Group B:</p>
 <pre class="r"><code>POR = &quot;Portugal&quot;
 POR_pts = 0
@@ -416,9 +416,9 @@ resB   = data.frame (resultB1, resultB2, resultB3, resultB4, resultB5, resultB6)
 resB</code></pre>
 <pre><code>##   resultB1 resultB2 resultB3 resultB4 resultB5 resultB6
 ## 1  Morocco Portugal Portugal     Iran    Spain     Iran
-## 2        1        2        3        0        3        0
+## 2        2        1        2        1        3        0
 ## 3     Iran    Spain  Morocco    Spain  Morocco Portugal
-## 4        2        1        1        2        1        1</code></pre>
+## 4        1        3        2        1        1        1</code></pre>
 <p>Calculate the points</p>
 <pre class="r"><code>if(resultB1[2] &gt; resultB1[4]) {  MAR_pts = MAR_pts + 3 }
 if(resultB1[2] &lt; resultB1[4]) {  IRI_pts = IRI_pts + 3 }
@@ -483,19 +483,19 @@ rownames(finalB)[4] &lt;- &quot;4th&quot;
 
 finalB</code></pre>
 <pre><code>##        teamB teamB_gs teamB_gc teamB_di teamB_pts
-## 1st Portugal        6        2        4         9
-## 2nd    Spain        6        3        3         6
-## 3rd     Iran        2        4       -2         3
-## 4th  Morocco        3        8       -5         0</code></pre>
+## 1st    Spain        7        3        4         7
+## 2nd Portugal        4        5       -1         4
+## 3rd  Morocco        5        6       -1         4
+## 4th     Iran        2        4       -2         1</code></pre>
 <p>These two teams qualify for the next round</p>
 <pre class="r"><code>qualB1 = finalB[1,]
 qualB2 = finalB[2,]
 qualB1</code></pre>
-<pre><code>##        teamB teamB_gs teamB_gc teamB_di teamB_pts
-## 1st Portugal        6        2        4         9</code></pre>
-<pre class="r"><code>qualB2</code></pre>
 <pre><code>##     teamB teamB_gs teamB_gc teamB_di teamB_pts
-## 2nd Spain        6        3        3         6</code></pre>
+## 1st Spain        7        3        4         7</code></pre>
+<pre class="r"><code>qualB2</code></pre>
+<pre><code>##        teamB teamB_gs teamB_gc teamB_di teamB_pts
+## 2nd Portugal        4        5       -1         4</code></pre>
 <p>Group C:</p>
 <pre class="r"><code>FRA = &quot;France&quot;
 FRA_pts = 0
@@ -608,9 +608,9 @@ resC   = data.frame (resultC1, resultC2, resultC3, resultC4, resultC5, resultC6)
 resC</code></pre>
 <pre><code>##    resultC1 resultC2  resultC3 resultC4 resultC5  resultC6
 ## 1    France     Peru   Denmark   France  Denmark Australia
-## 2         3        2         2        1        0         1
+## 2         3        2         1        1        0         0
 ## 3 Australia  Denmark Australia     Peru   France      Peru
-## 4         2        0         2        0        1         3</code></pre>
+## 4         2        1         1        2        2         2</code></pre>
 <p>Set up to see the result table in group B</p>
 <pre class="r"><code>#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 
@@ -629,19 +629,19 @@ rownames(finalC)[4] &lt;- &quot;4th&quot;
 
 finalC</code></pre>
 <pre><code>##         teamC teamC_gs teamC_gc teamC_di teamC_pts
-## 1st    France        5        2        3         9
-## 2nd      Peru        5        2        3         6
-## 3rd Australia        5        8       -3         1
+## 1st      Peru        6        2        4         9
+## 2nd    France        6        4        2         6
+## 3rd Australia        3        6       -3         1
 ## 4th   Denmark        2        5       -3         1</code></pre>
 <p>These two teams qualify for the next round</p>
 <pre class="r"><code>qualC1 = finalC[1,]
 qualC2 = finalC[2,]
 qualC1</code></pre>
-<pre><code>##      teamC teamC_gs teamC_gc teamC_di teamC_pts
-## 1st France        5        2        3         9</code></pre>
-<pre class="r"><code>qualC2</code></pre>
 <pre><code>##     teamC teamC_gs teamC_gc teamC_di teamC_pts
-## 2nd  Peru        5        2        3         6</code></pre>
+## 1st  Peru        6        2        4         9</code></pre>
+<pre class="r"><code>qualC2</code></pre>
+<pre><code>##      teamC teamC_gs teamC_gc teamC_di teamC_pts
+## 2nd France        6        4        2         6</code></pre>
 <p>Group D:</p>
 <pre class="r"><code>ARG = &quot;Argentina&quot;
 ARG_pts = 0
@@ -757,9 +757,9 @@ resD   = data.frame (resultD1, resultD2, resultD3, resultD4, resultD5, resultD6)
 resD</code></pre>
 <pre><code>##    resultD1 resultD2  resultD3 resultD4  resultD5 resultD6
 ## 1 Argentina  Croatia Argentina  Nigeria   Nigeria  Iceland
-## 2         2        2         2        0         1        3
+## 2         2        1         1        0         1        2
 ## 3   Iceland  Nigeria   Croatia  Iceland Argentina  Croatia
-## 4         1        0         1        1         4        1</code></pre>
+## 4         1        2         1        0         2        1</code></pre>
 <p>Set up to see the result table in group D</p>
 <pre class="r"><code>#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 
@@ -778,19 +778,19 @@ rownames(finalD)[4] &lt;- &quot;4th&quot;
 
 finalD</code></pre>
 <pre><code>##         teamD teamD_gs teamD_gc teamD_di teamD_pts
-## 1st Argentina        8        3        5         9
-## 2nd   Iceland        5        3        2         6
-## 3rd   Croatia        4        5       -1         3
-## 4th   Nigeria        1        7       -6         0</code></pre>
+## 1st Argentina        5        3        2         7
+## 2nd   Iceland        3        3        0         4
+## 3rd   Nigeria        3        3        0         4
+## 4th   Croatia        3        5       -2         1</code></pre>
 <p>These teams qualify for groupD</p>
 <pre class="r"><code>qualD1 = finalD[1,]
 qualD2 = finalD[2,]
 qualD1</code></pre>
 <pre><code>##         teamD teamD_gs teamD_gc teamD_di teamD_pts
-## 1st Argentina        8        3        5         9</code></pre>
+## 1st Argentina        5        3        2         7</code></pre>
 <pre class="r"><code>qualD2</code></pre>
 <pre><code>##       teamD teamD_gs teamD_gc teamD_di teamD_pts
-## 2nd Iceland        5        3        2         6</code></pre>
+## 2nd Iceland        3        3        0         4</code></pre>
 <p>Groupd E:</p>
 <pre class="r"><code>BRA = &quot;Brazil&quot;
 BRA_pts = 0
@@ -907,9 +907,9 @@ resE   = data.frame(resultE1, resultE2, resultE3, resultE4, resultE5, resultE6)
 resE</code></pre>
 <pre><code>##     resultE1    resultE2   resultE3    resultE4 resultE5    resultE6
 ## 1 Costa Rica      Brazil     Brazil      Serbia   Serbia Switzerland
-## 2          1           2          2           0        2           1
+## 2          1           1          2           1        1           2
 ## 3     Serbia Switzerland Costa Rica Switzerland   Brazil  Costa Rica
-## 4          3           2          1           3        4           0</code></pre>
+## 4          0           1          1           3        3           2</code></pre>
 <p>Set up to see the result table in group D</p>
 <pre class="r"><code>#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 
@@ -928,19 +928,19 @@ rownames(finalE)[4] &lt;- &quot;4th&quot;
 
 finalE</code></pre>
 <pre><code>##           teamE teamE_gs teamE_gc teamE_di teamE_pts
-## 1st      Brazil        8        5        3         7
-## 2nd Switzerland        6        2        4         7
-## 3rd      Serbia        5        8       -3         3
-## 4th  Costa Rica        2        6       -4         0</code></pre>
+## 1st      Brazil        6        3        3         7
+## 2nd Switzerland        6        4        2         5
+## 3rd  Costa Rica        4        4        0         4
+## 4th      Serbia        2        7       -5         0</code></pre>
 <p>Teams that qualify to knock out stage</p>
 <pre class="r"><code>qualE1 = finalE[1,]
 qualE2 = finalE[2,]
 qualE1</code></pre>
 <pre><code>##      teamE teamE_gs teamE_gc teamE_di teamE_pts
-## 1st Brazil        8        5        3         7</code></pre>
+## 1st Brazil        6        3        3         7</code></pre>
 <pre class="r"><code>qualE2</code></pre>
 <pre><code>##           teamE teamE_gs teamE_gc teamE_di teamE_pts
-## 2nd Switzerland        6        2        4         7</code></pre>
+## 2nd Switzerland        6        4        2         5</code></pre>
 <p>Group F:</p>
 <pre class="r"><code>GER = &quot;Germany&quot;
 GER_pts = 0
@@ -1052,9 +1052,9 @@ resF   = data.frame (resultF1, resultF2, resultF3, resultF4, resultF5, resultF6)
 resF</code></pre>
 <pre><code>##   resultF1    resultF2    resultF3 resultF4    resultF5 resultF6
 ## 1  Germany      Sweden South Korea  Germany South Korea   Mexico
-## 2        1           3           1        3           1        3
+## 2        1           2           1        3           1        1
 ## 3   Mexico South Korea      Mexico   Sweden     Germany   Sweden
-## 4        1           1           3        0           5        1</code></pre>
+## 4        2           0           4        2           4        1</code></pre>
 <p>Set up to see the result table in group F</p>
 <pre class="r"><code>#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 teamF     = c(GER, SWE, MEX, KOR)
@@ -1072,19 +1072,19 @@ rownames(finalF)[4] = &quot;4th&quot;
 
 finalF</code></pre>
 <pre><code>##           teamF teamF_gs teamF_gc teamF_di teamF_pts
-## 1st     Germany        9        2        7         7
-## 2nd      Mexico        7        4        3         7
-## 3rd      Sweden        4        7       -3         3
-## 4th South Korea        3       11       -8         0</code></pre>
+## 1st      Mexico        7        5        2         7
+## 2nd     Germany        8        5        3         6
+## 3rd      Sweden        5        4        1         4
+## 4th South Korea        2       10       -8         0</code></pre>
 <p>These two teams qualify for the next round</p>
 <pre class="r"><code>qualF1 = finalF[1,]
 qualF2 = finalF[2,]
 qualF1</code></pre>
-<pre><code>##       teamF teamF_gs teamF_gc teamF_di teamF_pts
-## 1st Germany        9        2        7         7</code></pre>
-<pre class="r"><code>qualF2</code></pre>
 <pre><code>##      teamF teamF_gs teamF_gc teamF_di teamF_pts
-## 2nd Mexico        7        4        3         7</code></pre>
+## 1st Mexico        7        5        2         7</code></pre>
+<pre class="r"><code>qualF2</code></pre>
+<pre><code>##       teamF teamF_gs teamF_gc teamF_di teamF_pts
+## 2nd Germany        8        5        3         6</code></pre>
 <p>Group G:</p>
 <pre class="r"><code>BEL = &quot;Belgium&quot;
 BEL_pts = 0
@@ -1196,9 +1196,9 @@ resG   = data.frame (resultG1, resultG2, resultG3, resultG4, resultG5, resultG6)
 resG</code></pre>
 <pre><code>##   resultG1 resultG2 resultG3 resultG4 resultG5 resultG6
 ## 1  Belgium  Tunisia  Belgium  England  England   Panama
-## 2        3        0        4        2        2        2
+## 2        3        1        4        2        1        1
 ## 3   Panama  England  Tunisia   Panama  Belgium  Tunisia
-## 4        0        2        1        1        2        1</code></pre>
+## 4        1        3        1        0        3        1</code></pre>
 <p>Set up to see the result table in group F</p>
 <pre class="r"><code>#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 teamG     = c(BEL, PAN, TUN, ENG)
@@ -1216,19 +1216,19 @@ rownames(finalF)[4] = &quot;4th&quot;
 
 finalG</code></pre>
 <pre><code>##     teamG teamG_gs teamG_gc teamG_di teamG_pts
-## 1 Belgium        9        3        6         7
-## 4 England        6        3        3         7
-## 2  Panama        3        6       -3         3
-## 3 Tunisia        2        8       -6         0</code></pre>
+## 1 Belgium       10        3        7         9
+## 4 England        6        4        2         6
+## 2  Panama        2        6       -4         1
+## 3 Tunisia        3        8       -5         1</code></pre>
 <p>These two teams qualify for the next round</p>
 <pre class="r"><code>qualG1 = finalG[1,]
 qualG2 = finalG[2,]
 qualG1</code></pre>
 <pre><code>##     teamG teamG_gs teamG_gc teamG_di teamG_pts
-## 1 Belgium        9        3        6         7</code></pre>
+## 1 Belgium       10        3        7         9</code></pre>
 <pre class="r"><code>qualG2</code></pre>
 <pre><code>##     teamG teamG_gs teamG_gc teamG_di teamG_pts
-## 4 England        6        3        3         7</code></pre>
+## 4 England        6        4        2         6</code></pre>
 <p>Group H:</p>
 <pre class="r"><code>POL = &quot;Poland&quot;
 POL_pts = 0
@@ -1340,9 +1340,9 @@ resF   = data.frame (resultH1, resultH2, resultH3, resultH4, resultH5, resultH6)
 resF</code></pre>
 <pre><code>##   resultH1 resultH2 resultH3 resultH4 resultH5 resultH6
 ## 1 Colombia   Poland    Japan   Poland    Japan  Senegal
-## 2        3        4        2        1        1        2
+## 2        3        3        3        1        1        3
 ## 3    Japan  Senegal  Senegal Colombia   Poland Colombia
-## 4        1        2        1        3        3        0</code></pre>
+## 4        1        1        3        2        4        3</code></pre>
 <p>Set up to see the result table in group F</p>
 <pre class="r"><code>#if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 teamH     = c(POL, SEN, COL, JPN)
@@ -1360,19 +1360,19 @@ rownames(finalH)[4] = &quot;4th&quot;
 
 finalH</code></pre>
 <pre><code>##        teamH teamH_gs teamH_gc teamH_di teamH_pts
-## 1st Colombia        6        4        2         9
-## 2nd   Poland        6        7       -1         6
-## 3rd    Japan        4        7       -3         3
-## 4th  Senegal        5        6       -1         0</code></pre>
+## 1st Colombia        8        5        3         9
+## 2nd   Poland        8        7        1         6
+## 3rd  Senegal        7        9       -2         1
+## 4th    Japan        5       10       -5         1</code></pre>
 <p>These two teams qualify for the next round</p>
 <pre class="r"><code>qualH1 = finalH[1,]
 qualH2 = finalH[2,]
 qualH1</code></pre>
 <pre><code>##        teamH teamH_gs teamH_gc teamH_di teamH_pts
-## 1st Colombia        6        4        2         9</code></pre>
+## 1st Colombia        8        5        3         9</code></pre>
 <pre class="r"><code>qualH2</code></pre>
 <pre><code>##      teamH teamH_gs teamH_gc teamH_di teamH_pts
-## 2nd Poland        6        7       -1         6</code></pre>
+## 2nd Poland        8        7        1         6</code></pre>
 <p>This is the knock - out phase</p>
 <pre class="r"><code># 1C vs 2D
 Match49 = data.frame(qualC1,qualD2)
@@ -1398,51 +1398,51 @@ write.csv(ko, file = &quot;ko1.csv&quot;)
 <p>Win 49 vs Win 50</p>
 <pre class="r"><code>#This is match 57
 Match49</code></pre>
-<pre><code>##      teamC teamC_gs teamC_gc teamC_di teamC_pts   teamD teamD_gs teamD_gc
-## 1st France        5        2        3         9 Iceland        5        3
+<pre><code>##     teamC teamC_gs teamC_gc teamC_di teamC_pts   teamD teamD_gs teamD_gc
+## 1st  Peru        6        2        4         9 Iceland        3        3
 ##     teamD_di teamD_pts
-## 1st        2         6</code></pre>
+## 1st        0         4</code></pre>
 <pre class="r"><code>Match50</code></pre>
-<pre><code>##      teamA teamA_gs teamA_gc teamA_di teamA_pts teamB teamB_gs teamB_gc
-## 1st Russia       12        4        8         9 Spain        6        3
+<pre><code>##      teamA teamA_gs teamA_gc teamA_di teamA_pts    teamB teamB_gs teamB_gc
+## 1st Russia        6        5        1         6 Portugal        4        5
 ##     teamB_di teamB_pts
-## 1st        3         6</code></pre>
+## 1st       -1         4</code></pre>
 <p>Win 53 vs Win 54</p>
 <pre class="r"><code>#This is match 58
 Match53</code></pre>
-<pre><code>##      teamE teamE_gs teamE_gc teamE_di teamE_pts  teamF teamF_gs teamF_gc
-## 1st Brazil        8        5        3         7 Mexico        7        4
+<pre><code>##      teamE teamE_gs teamE_gc teamE_di teamE_pts   teamF teamF_gs teamF_gc
+## 1st Brazil        6        3        3         7 Germany        8        5
 ##     teamF_di teamF_pts
-## 1st        3         7</code></pre>
+## 1st        3         6</code></pre>
 <pre class="r"><code>Match54</code></pre>
 <pre><code>##     teamG teamG_gs teamG_gc teamG_di teamG_pts  teamH teamH_gs teamH_gc
-## 1 Belgium        9        3        6         7 Poland        6        7
+## 1 Belgium       10        3        7         9 Poland        8        7
 ##   teamH_di teamH_pts
-## 1       -1         6</code></pre>
+## 1        1         6</code></pre>
 <p>Win 55 vs Win 56</p>
 <pre class="r"><code>#This is match 59
 Match55</code></pre>
-<pre><code>##       teamF teamF_gs teamF_gc teamF_di teamF_pts       teamE teamE_gs
-## 1st Germany        9        2        7         7 Switzerland        6
+<pre><code>##      teamF teamF_gs teamF_gc teamF_di teamF_pts       teamE teamE_gs
+## 1st Mexico        7        5        2         7 Switzerland        6
 ##     teamE_gc teamE_di teamE_pts
-## 1st        2        4         7</code></pre>
+## 1st        4        2         5</code></pre>
 <pre class="r"><code>Match56</code></pre>
 <pre><code>##        teamH teamH_gs teamH_gc teamH_di teamH_pts   teamG teamG_gs
-## 1st Colombia        6        4        2         9 England        6
+## 1st Colombia        8        5        3         9 England        6
 ##     teamG_gc teamG_di teamG_pts
-## 1st        3        3         7</code></pre>
+## 1st        4        2         6</code></pre>
 <p>Win 51 vs Win 52</p>
 <pre class="r"><code>#This is match 60
 Match51</code></pre>
-<pre><code>##        teamB teamB_gs teamB_gc teamB_di teamB_pts   teamA teamA_gs
-## 1st Portugal        6        2        4         9 Uruguay        9
-##     teamA_gc teamA_di teamA_pts
-## 1st        6        3         4</code></pre>
+<pre><code>##     teamB teamB_gs teamB_gc teamB_di teamB_pts   teamA teamA_gs teamA_gc
+## 1st Spain        7        3        4         7 Uruguay        7        6
+##     teamA_di teamA_pts
+## 1st        1         5</code></pre>
 <pre class="r"><code>Match52</code></pre>
-<pre><code>##         teamD teamD_gs teamD_gc teamD_di teamD_pts teamC teamC_gs teamC_gc
-## 1st Argentina        8        3        5         9  Peru        5        2
-##     teamC_di teamC_pts
-## 1st        3         6</code></pre>
+<pre><code>##         teamD teamD_gs teamD_gc teamD_di teamD_pts  teamC teamC_gs
+## 1st Argentina        5        3        2         7 France        6
+##     teamC_gc teamC_di teamC_pts
+## 1st        4        2         6</code></pre>
 <p>Semifinals 1: Win 57 vs Win 58</p>
 <p>Semifinals 2: Win 59 vs Win 60</p>
 <p>Runner - up: Lose SF1 vs Lose SF2</p>
