@@ -1,7 +1,7 @@
 ---
-title: "knock_outphase"
-output: html_document
+title: "World Cup 2018 knock_outphase prediction"
 author: "Khuong Le"
+output: html_document
 ---
 
 ```{r}
@@ -11,40 +11,29 @@ if(length(mia_pkgs) > 0) install.packages(mia_pkgs)
 loaded_pkgs = lapply(pkg_list, require, character.only=TRUE)
 ```
 
-The data below is the result from predictwc2018 file. From this data we will calculate the probability to advance next ground for each team. I have different seed than the Fifa given because I use the ranking in May 17. 
+The data below is the result from predictwc2018.Rmd file. From this data we will calculate the probability to advance next ground for each team.  
 ```{r}
 kophase = read.csv("ko.csv")
 #kophase
 ```
-
-only first place and second place
  
-Seed in groupA:
-Russia in the current ranking is seed 3 but since it's the home for this world cup so they will gain higher seed because they will have home advantage. No team will be in seed 1.
-
-2: Uruguay, Russia
-
-3: Egypt
-
-4: Saudi Arabia
+GroupA:
 
 ```{r}
-advrus1    = length(kophase$teamA1[which(kophase$teamA1 == "Russia")])
-advuru1    = length(kophase$teamA1[which(kophase$teamA1 == "Uruguay")])
-advegy1    = length(kophase$teamA1[which(kophase$teamA1 == "Egypt")])
-advksa1    = length(kophase$teamA1[which(kophase$teamA1 == "Saudi Arabia")])
+advrus1   = round(length(kophase$teamA1[which(kophase$teamA1 == "Russia")]) / (length(kophase$teamA1)), 4)*100
+advuru1   = round(length(kophase$teamA1[which(kophase$teamA1 == "Uruguay")]) / (length(kophase$teamA1)),4)*100 
+advegy1   = round(length(kophase$teamA1[which(kophase$teamA1 == "Egypt")]) / (length(kophase$teamA1)),4)*100 
+advksa1   = round(length(kophase$teamA1[which(kophase$teamA1 == "Saudi Arabia")]) / (length(kophase$teamA1)),4)*100 
 
-advrus2   = length(kophase$teamA2[which(kophase$teamA2 == "Russia")])
-advuru2   = length(kophase$teamA2[which(kophase$teamA2 == "Uruguay")])
-advegy2   = length(kophase$teamA2[which(kophase$teamA2 == "Egypt")])
-advksa2   = length(kophase$teamA2[which(kophase$teamA2 == "Saudi Arabia")])
+advrus2   = round(length(kophase$teamA2[which(kophase$teamA2 == "Russia")]) / (length(kophase$teamA1)),4)*100 
+advuru2   = round(length(kophase$teamA2[which(kophase$teamA2 == "Uruguay")]) / (length(kophase$teamA1)),4)*100 
+advegy2   = round(length(kophase$teamA2[which(kophase$teamA2 == "Egypt")]) / (length(kophase$teamA1)),4)*100  
+advksa2   = round(length(kophase$teamA2[which(kophase$teamA2 == "Saudi Arabia")]) / (length(kophase$teamA1)),4)*100 
 
-sum1 = advrus1 + advuru1 + advegy1 + advksa1
-sum2 = advrus2 + advuru2 + advegy2 + advksa2
 gadata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Egypt", "Russia", "Saudi Arabia", "Uruguay"),2),
-        percentage = c(advegy1, advrus1, advksa1, advuru1, advegy2, advrus2, advksa2, advuru2)/(length(kophase$teamA1))*100)
+        percentage = c(advegy1, advrus1, advksa1, advuru1, advegy2, advrus2, advksa2, advuru2))
 
 ggplot(data = gadata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -52,84 +41,63 @@ ggplot(data = gadata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-Uruguay     : has `r (advuru1 + advuru2)/(length(kophase$teamA1))*100` % advance to next round
+Uruguay     : has `r (advuru1 + advuru2)` % advance to next round
 
-Russia      : has `r (advrus1 + advrus2)/(length(kophase$teamA1))*100` % advance to next round
+Russia      : has `r (advrus1 + advrus2)` % advance to next round
 
-Egypt       : has `r (advegy1 + advegy2)/(length(kophase$teamA1))*100` % advance to next round
+Egypt       : has `r (advegy1 + advegy2)` % advance to next round
 
-Saudi Arabia: has `r (advksa1 + advksa2)/(length(kophase$teamA1))*100` % advance to next round
+Saudi Arabia: has `r (advksa1 + advksa2)` % advance to next round
 
 
-Seed in group B:
-
-1: Portugal
-
-2: Spain
-
-3: Egypt
-
-4: Saudi Arabia
+Group B:
 
 ```{r}
-advpor1   = length(kophase$teamB1[which(kophase$teamB1 == "Portugal")])
-advesp1   = length(kophase$teamB1[which(kophase$teamB1 == "Spain")])
-advmar1   = length(kophase$teamB1[which(kophase$teamB1 == "Morocco")])
-adviri1   = length(kophase$teamB1[which(kophase$teamB1 == "Iran")])
+advpor1   = round(length(kophase$teamB1[which(kophase$teamB1 == "Portugal")])/ (length(kophase$teamB1)), 4)*100
+advesp1   = round(length(kophase$teamB1[which(kophase$teamB1 == "Spain")])/ (length(kophase$teamB1)), 4)*100
+advmar1   = round(length(kophase$teamB1[which(kophase$teamB1 == "Morocco")])/ (length(kophase$teamB1)), 4)*100
+adviri1   = round(length(kophase$teamB1[which(kophase$teamB1 == "Iran")])/ (length(kophase$teamB1)), 4)*100
 
-advpor2   = length(kophase$teamB1[which(kophase$teamB2 == "Portugal")])
-advesp2   = length(kophase$teamB1[which(kophase$teamB2 == "Spain")])
-advmar2   = length(kophase$teamB1[which(kophase$teamB2 == "Morocco")])
-adviri2   = length(kophase$teamB1[which(kophase$teamB2 == "Iran")])
+advpor2   = round(length(kophase$teamB1[which(kophase$teamB2 == "Portugal")])/ (length(kophase$teamB2)), 4)*100
+advesp2   = round(length(kophase$teamB1[which(kophase$teamB2 == "Spain")])/ (length(kophase$teamB2)), 4)*100
+advmar2   = round(length(kophase$teamB1[which(kophase$teamB2 == "Morocco")])/ (length(kophase$teamB2)), 4)*100
+adviri2   = round(length(kophase$teamB1[which(kophase$teamB2 == "Iran")])/ (length(kophase$teamB2)), 4)*100
 
-sum1 = advpor1 + advesp1 + advmar1 + adviri1
-sum2 = advpor2 + advesp2 + advmar2 + adviri2
 gbdata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Portugal", "Spain", "Morocco", "Iran"),2),
-        percentage = c(advpor1, advesp1, advmar1, adviri1, advpor2, advesp2, advmar2, adviri2)/(length(kophase$teamB1))*100)
+        percentage = c(advpor1, advesp1, advmar1, adviri1, advpor2, advesp2, advmar2, adviri2))
 
 ggplot(data = gbdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 ```
 
-Portugual : has `r (advpor1 + advpor2)/(length(kophase$teamB1))*100` % advance to next round
+Portugual : has `r (advpor1 + advpor2)` % advance to next round
 
-Spain     : has `r (advesp1 + advesp2)/(length(kophase$teamB1))*100` % advance to next round
+Spain     : has `r (advesp1 + advesp2)` % advance to next round
 
-Morocco   : has `r (advmar1 + advmar2)/(length(kophase$teamB1))*100` % advance to next round
+Morocco   : has `r (advmar1 + advmar2)` % advance to next round
 
-Iran      : has `r (adviri1 + adviri2)/(length(kophase$teamB1))*100` % advance to next round
+Iran      : has `r (adviri1 + adviri2)` % advance to next round
 
-Seed in group C:
-
-1: France
-
-2: Peru
-
-3: Denmark
-
-4: Australia
+Group C:
 
 ```{r}
-advfra1   = length(kophase$teamC1[which(kophase$teamC1 == "France")])
-advper1   = length(kophase$teamC1[which(kophase$teamC1 == "Peru")])
-advdan1   = length(kophase$teamC1[which(kophase$teamC1 == "Denmark")])
-advaus1   = length(kophase$teamC1[which(kophase$teamC1 == "Australia")])
+advfra1   = round(length(kophase$teamC1[which(kophase$teamC1 == "France")])/ (length(kophase$teamC1)), 4)*100
+advper1   = round(length(kophase$teamC1[which(kophase$teamC1 == "Peru")])/ (length(kophase$teamC1)), 4)*100
+advdan1   = round(length(kophase$teamC1[which(kophase$teamC1 == "Denmark")])/ (length(kophase$teamC1)), 4)*100
+advaus1   = round(length(kophase$teamC1[which(kophase$teamC1 == "Australia")])/ (length(kophase$teamC1)), 4)*100
 
-advfra2   = length(kophase$teamC2[which(kophase$teamC2 == "France")])
-advper2   = length(kophase$teamC2[which(kophase$teamC2 == "Peru")])
-advdan2   = length(kophase$teamC2[which(kophase$teamC2 == "Denmark")])
-advaus2   = length(kophase$teamC2[which(kophase$teamC2 == "Australia")])
-
-sum1 = advfra1 + advper1 + advdan1 + advaus1
-sum2 = advfra2 + advper2 + advdan2 + advaus2
+advfra2   = round(length(kophase$teamC2[which(kophase$teamC2 == "France")])/ (length(kophase$teamC2_gs)), 4)*100
+advper2   = round(length(kophase$teamC2[which(kophase$teamC2 == "Peru")])/ (length(kophase$teamC2_gs)), 4)*100
+advdan2   = round(length(kophase$teamC2[which(kophase$teamC2 == "Denmark")])/ (length(kophase$teamC2_gs)), 4)*100
+advaus2   = round(length(kophase$teamC2[which(kophase$teamC2 == "Australia")])/ (length(kophase$teamC2_gs)), 4)*100
 
 gcdata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("France", "Peru", "Denmark", "Australia"),2),
-        percentage = c(advfra1, advper1, advdan1, advaus1, advfra2, advper2, advdan2, advaus2)/(length(kophase$teamC1))*100)
+        percentage = c(advfra1, advper1, advdan1, advaus1, advfra2, advper2, advdan2, advaus2))
 
 ggplot(data = gcdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -137,44 +105,31 @@ ggplot(data = gcdata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-France    : has `r (advfra1 + advfra2)/(length(kophase$teamC1))*100` % advance to next round
+France    : has `r (advfra1 + advfra2)` % advance to next round
 
-Peru      : has `r (advper1 + advper2)/(length(kophase$teamC1))*100` % advance to next round
+Peru      : has `r (advper1 + advper2)` % advance to next round
 
-Denmark   : has `r (advdan1 + advdan2)/(length(kophase$teamC1))*100` % advance to next round
+Denmark   : has `r (advdan1 + advdan2)` % advance to next round
 
-Australia : has `r (advaus1 + advaus2)/(length(kophase$teamC1))*100` % advance to next round
+Australia : has `r (advaus1 + advaus2)` % advance to next round
 
-
-Seed in group D: Iceland is still a mystery in this group but they are lucky that they get seed 3 so they will have higher chance to advance to next round than Nigeria 
-
-1: Argentina
-
-2: Croatia
-
-3: Iceland
-
-4: Nigeria
+Seed in group D: 
 
 ```{r}
-advarg1   = length(kophase$teamD1[which(kophase$teamD1 == "Argentina")])
-advice1   = length(kophase$teamD1[which(kophase$teamD1 == "Iceland")])
-advcro1   = length(kophase$teamD1[which(kophase$teamD1 == "Croatia")])
-advnga1   = length(kophase$teamD1[which(kophase$teamD1 == "Nigeria")])
+advarg1   = round(length(kophase$teamD1[which(kophase$teamD1 == "Argentina")])/ (length(kophase$teamD1_gs)), 4)*100
+advice1   = round(length(kophase$teamD1[which(kophase$teamD1 == "Iceland")])/(length(kophase$teamD1_gs)), 4)*100
+advcro1   = round(length(kophase$teamD1[which(kophase$teamD1 == "Croatia")])/(length(kophase$teamD1_gs)), 4)*100
+advnga1   = round(length(kophase$teamD1[which(kophase$teamD1 == "Nigeria")])/(length(kophase$teamD1_gs)), 4)*100
 
-
-advarg2   = length(kophase$teamD2[which(kophase$teamD2 == "Argentina")])
-advice2   = length(kophase$teamD2[which(kophase$teamD2 == "Iceland")])
-advcro2   = length(kophase$teamD2[which(kophase$teamD2 == "Croatia")])
-advnga2   = length(kophase$teamD2[which(kophase$teamD2 == "Nigeria")])
-
-sum1 = advarg1 + advice1 + advcro1 + advnga1
-sum2 = advarg2 + advice2 + advcro2 + advnga2
+advarg2   = round(length(kophase$teamD2[which(kophase$teamD2 == "Argentina")])/ (length(kophase$teamD2_gs)), 4)*100
+advice2   = round(length(kophase$teamD2[which(kophase$teamD2 == "Iceland")])/ (length(kophase$teamD2_gs)), 4)*100
+advcro2   = round(length(kophase$teamD2[which(kophase$teamD2 == "Croatia")])/ (length(kophase$teamD2_gs)), 4)*100
+advnga2   = round(length(kophase$teamD2[which(kophase$teamD2 == "Nigeria")])/ (length(kophase$teamD2_gs)), 4)*100
 
 gddata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Argentina", "Iceland", "Croatia", "Nigeria"),2),
-        percentage = c(advarg1, advice1, advcro1, advnga1, advarg2, advice2, advcro2, advnga2)/(length(kophase$teamD1))*100)
+        percentage = c(advarg1, advice1, advcro1, advnga1, advarg2, advice2, advcro2, advnga2))
 
 ggplot(data = gddata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -182,42 +137,31 @@ ggplot(data = gddata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-Argentina : has `r (advarg1 + advarg2)/(length(kophase$teamD1))*100` % advance to next round
+Argentina : has `r (advarg1 + advarg2)` % advance to next round
 
-Iceland   : has `r (advice1 + advice2)/(length(kophase$teamD1))*100` % advance to next round
+Iceland   : has `r (advice1 + advice2)` % advance to next round
 
-Croatia   : has `r (advcro1 + advcro2)/(length(kophase$teamD1))*100` % advance to next round
+Croatia   : has `r (advcro1 + advcro2)` % advance to next round
 
-Nigeria   : has `r (advnga1 + advnga2)/(length(kophase$teamD1))*100` % advance to next round
+Nigeria   : has `r (advnga1 + advnga2)` % advance to next round
 
-Seed in group E: 
-
-1: Brazil
-
-2: Switzerland
-
-3: Costa Rica
-
-4: Serbia
+Group E: 
 
 ```{r}
-advbra1   = length(kophase$teamE1[which(kophase$teamE1 == "Brazil")])
-advswi1   = length(kophase$teamE1[which(kophase$teamE1 == "Switzerland")])
-advcri1   = length(kophase$teamE1[which(kophase$teamE1 == "Costa Rica")])
-advsrb1   = length(kophase$teamE1[which(kophase$teamE1 == "Serbia")])
+advbra1   = round(length(kophase$teamE1[which(kophase$teamE1 == "Brazil")])/ (length(kophase$teamE1_gs)), 4)*100
+advswi1   = round(length(kophase$teamE1[which(kophase$teamE1 == "Switzerland")])/ (length(kophase$teamE1_gs)), 4)*100
+advcri1   = round(length(kophase$teamE1[which(kophase$teamE1 == "Costa Rica")])/ (length(kophase$teamE1_gs)), 4)*100
+advsrb1   = round(length(kophase$teamE1[which(kophase$teamE1 == "Serbia")])/ (length(kophase$teamE1_gs)), 4)*100
 
-advbra2   = length(kophase$teamE2[which(kophase$teamE2 == "Brazil")])
-advswi2   = length(kophase$teamE2[which(kophase$teamE2 == "Switzerland")])
-advcri2   = length(kophase$teamE2[which(kophase$teamE2 == "Costa Rica")])
-advsrb2   = length(kophase$teamE2[which(kophase$teamE2 == "Serbia")])
-
-sum1 = advbra1 + advswi1 + advcri1 + advsrb1
-sum2 = advbra2 + advswi2 + advcri2 + advsrb2
+advbra2   = round(length(kophase$teamE2[which(kophase$teamE2 == "Brazil")])/ (length(kophase$teamE2_gs)), 4)*100
+advswi2   = round(length(kophase$teamE2[which(kophase$teamE2 == "Switzerland")])/ (length(kophase$teamE2_gs)), 4)*100
+advcri2   = round(length(kophase$teamE2[which(kophase$teamE2 == "Costa Rica")])/ (length(kophase$teamE2_gs)), 4)*100
+advsrb2   = round(length(kophase$teamE2[which(kophase$teamE2 == "Serbia")])/ (length(kophase$teamE2_gs)), 4)*100
 
 gedata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Brazil", "Switzerland", "Costa Rica", "Serbia"),2),
-        percentage = c(advbra1, advswi1, advcri1, advsrb1, advbra2, advswi2,  advcri2, advsrb2)/(length(kophase$teamE1))*100)
+        percentage = c(advbra1, advswi1, advcri1, advsrb1, advbra2, advswi2,  advcri2, advsrb2))
 
 ggplot(data = gedata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -225,42 +169,31 @@ ggplot(data = gedata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-Brazil      : has `r (advbra1 + advbra2)/(length(kophase$teamE1))*100` % advance to next round
+Brazil      : has `r (advbra1 + advbra2)` % advance to next round
 
-Switzerland : has `r (advswi1 + advswi2)/(length(kophase$teamE1))*100` % advance to next round
+Switzerland : has `r (advswi1 + advswi2)` % advance to next round
 
-Costa Rica  : has `r (advcri1 + advcri2)/(length(kophase$teamE1))*100` % advance to next round
+Costa Rica  : has `r (advcri1 + advcri2)` % advance to next round
 
-Serbia      : has `r (advsrb1 + advsrb2)/(length(kophase$teamE1))*100` % advance to next round
+Serbia      : has `r (advsrb1 + advsrb2)` % advance to next round
 
-Seed in group F: 
-
-1: Germany
-
-2: Mexico
-
-3: Sweden
-
-4: South Korea
+Group F: 
 
 ```{r}
-advger1   = length(kophase$teamF1[which(kophase$teamF1 == "Germany")])
-advmex1   = length(kophase$teamF1[which(kophase$teamF1 == "Mexico")])
-advswe1   = length(kophase$teamF1[which(kophase$teamF1 == "Sweden")])
-advkor1   = length(kophase$teamF1[which(kophase$teamF1 == "South Korea")])
+advger1   = round(length(kophase$teamF1[which(kophase$teamF1 == "Germany")])/ (length(kophase$teamF1_gs)), 4)*100
+advmex1   = round(length(kophase$teamF1[which(kophase$teamF1 == "Mexico")])/ (length(kophase$teamF1_gs)), 4)*100
+advswe1   = round(length(kophase$teamF1[which(kophase$teamF1 == "Sweden")])/ (length(kophase$teamF1_gs)), 4)*100
+advkor1   = round(length(kophase$teamF1[which(kophase$teamF1 == "South Korea")])/ (length(kophase$teamF1_gs)), 4)*100
 
-advger2   = length(kophase$teamF2[which(kophase$teamF2 == "Germany")])
-advmex2   = length(kophase$teamF2[which(kophase$teamF2 == "Mexico")])
-advswe2   = length(kophase$teamF2[which(kophase$teamF2 == "Sweden")])
-advkor2   = length(kophase$teamF2[which(kophase$teamF2 == "South Korea")])
-
-sum1 = advger1 + advmex1 + advswe1 + advkor1
-sum2 = advger2 + advmex2 + advswe2 + advkor2
+advger2   = round(length(kophase$teamF2[which(kophase$teamF2 == "Germany")])/ (length(kophase$teamF2_gs)), 4)*100
+advmex2   = round(length(kophase$teamF2[which(kophase$teamF2 == "Mexico")])/ (length(kophase$teamF2_gs)), 4)*100
+advswe2   = round(length(kophase$teamF2[which(kophase$teamF2 == "Sweden")])/ (length(kophase$teamF2_gs)), 4)*100
+advkor2   = round(length(kophase$teamF2[which(kophase$teamF2 == "South Korea")])/ (length(kophase$teamF2_gs)), 4)*100
 
 gfdata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Germany", "Mexico", "Sweden", "South Korea"),2),
-        percentage = c(advger1, advmex1, advswe1, advkor1, advger2, advmex2, advswe2, advkor2)/(length(kophase$teamF1))*100)
+        percentage = c(advger1, advmex1, advswe1, advkor1, advger2, advmex2, advswe2, advkor2))
 
 ggplot(data = gfdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -268,42 +201,31 @@ ggplot(data = gfdata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-Germany     : has `r (advger1 + advger2)/(length(kophase$teamF1))*100` % advance to next round
+Germany     : has `r (advger1 + advger2)` % advance to next round
 
-Mexico      : has `r (advmex1 + advmex2)/(length(kophase$teamF1))*100` % advance to next round
+Mexico      : has `r (advmex1 + advmex2)` % advance to next round
 
-Sweden      : has `r (advswe1 + advswe2)/(length(kophase$teamF1))*100` % advance to next round
+Sweden      : has `r (advswe1 + advswe2)` % advance to next round
 
-South Korea : has `r (advkor1 + advkor2)/(length(kophase$teamF1))*100` % advance to next round
+South Korea : has `r (advkor1 + advkor2)` % advance to next round
 
-Seed in group G: 
-
-1: Belgium
-
-2: England
-
-3: Tunisia
-
-4: Panama
+Group G: 
 
 ```{r}
-advbel1   = length(kophase$teamG1[which(kophase$teamG1 == "Belgium")])
-adveng1   = length(kophase$teamG1[which(kophase$teamG1 == "England")])
-advtun1   = length(kophase$teamG1[which(kophase$teamG1 == "Tunisia")])
-advpan1   = length(kophase$teamG1[which(kophase$teamG1 == "Panama")])
+advbel1   = round(length(kophase$teamG1[which(kophase$teamG1 == "Belgium")])/ (length(kophase$teamG1_gs)), 4)*100
+adveng1   = round(length(kophase$teamG1[which(kophase$teamG1 == "England")])/ (length(kophase$teamG1_gs)), 4)*100
+advtun1   = round(length(kophase$teamG1[which(kophase$teamG1 == "Tunisia")])/ (length(kophase$teamG1_gs)), 4)*100
+advpan1   = round(length(kophase$teamG1[which(kophase$teamG1 == "Panama")])/ (length(kophase$teamG1_gs)), 4)*100
 
-advbel2   = length(kophase$teamG2[which(kophase$teamG2 == "Belgium")])
-adveng2   = length(kophase$teamG2[which(kophase$teamG2 == "England")])
-advtun2   = length(kophase$teamG2[which(kophase$teamG2 == "Tunisia")])
-advpan2   = length(kophase$teamG2[which(kophase$teamG2 == "Panama")])
-
-sum1 = advbel1 + adveng1 + advtun1 + advpan1
-sum2 = advbel2 + adveng2 + advtun2 + advpan2
+advbel2   = round(length(kophase$teamG2[which(kophase$teamG2 == "Belgium")])/ (length(kophase$teamG2_gs)), 4)*100
+adveng2   = round(length(kophase$teamG2[which(kophase$teamG2 == "England")])/ (length(kophase$teamG2_gs)), 4)*100
+advtun2   = round(length(kophase$teamG2[which(kophase$teamG2 == "Tunisia")])/ (length(kophase$teamG2_gs)), 4)*100
+advpan2   = round(length(kophase$teamG2[which(kophase$teamG2 == "Panama")])/ (length(kophase$teamG2_gs)), 4)*100
 
 ggdata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Belgium", "England", "Tunisia", "Panama"),2),
-        percentage = c(advbel1, adveng1, advtun1, advpan1, advbel2, adveng2, advtun2, advpan2)/(length(kophase$teamG1))*100)
+        percentage = c(advbel1, adveng1, advtun1, advpan1, advbel2, adveng2, advtun2, advpan2))
 
 ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -311,42 +233,31 @@ ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-Belgium : has `r (advbel1 + advbel2)/(length(kophase$teamG1))*100` % advance to next round
+Belgium : has `r (advbel1 + advbel2)` % advance to next round
 
-England : has `r (adveng1 + adveng2)/(length(kophase$teamG1))*100` % advance to next round
+England : has `r (adveng1 + adveng2)` % advance to next round
 
-Tunisia : has `r (advtun1 + advtun2)/(length(kophase$teamG1))*100` % advance to next round
+Tunisia : has `r (advtun1 + advtun2)` % advance to next round
 
-Panama  : has `r (advpan1 + advpan2)/(length(kophase$teamG1))*100` % advance to next round
+Panama  : has `r (advpan1 + advpan2)` % advance to next round
 
-Seed in group H: 
-
-1: Poland
-
-2: Colombia
-
-3: Senegal
-
-4: Japan
+Group H: 
 
 ```{r}
-advpol1   = length(kophase$teamH1[which(kophase$teamH1 == "Poland")])
-advsen1   = length(kophase$teamH1[which(kophase$teamH1 == "Colombia")])
-advcol1   = length(kophase$teamH1[which(kophase$teamH1 == "Senegal")])
-advjpn1   = length(kophase$teamH1[which(kophase$teamH1 == "Japan")])
+advpol1   = round(length(kophase$teamH1[which(kophase$teamH1 == "Poland")])/ (length(kophase$teamH1_gs)), 4)*100
+advsen1   = round(length(kophase$teamH1[which(kophase$teamH1 == "Colombia")])/ (length(kophase$teamH1_gs)), 4)*100
+advcol1   = round(length(kophase$teamH1[which(kophase$teamH1 == "Senegal")])/ (length(kophase$teamH1_gs)), 4)*100
+advjpn1   = round(length(kophase$teamH1[which(kophase$teamH1 == "Japan")])/ (length(kophase$teamH1_gs)), 4)*100
 
-advpol2   = length(kophase$teamH2[which(kophase$teamH2 == "Poland")])
-advsen2   = length(kophase$teamH2[which(kophase$teamH2 == "Colombia")])
-advcol2   = length(kophase$teamH2[which(kophase$teamH2 == "Senegal")])
-advjpn2   = length(kophase$teamH2[which(kophase$teamH2 == "Japan")])
-
-sum1 = advpol1 + advsen1 + advcol1 + advjpn1
-sum2 = advpol2 + advsen2 + advcol2 + advjpn2
+advpol2   = round(length(kophase$teamH2[which(kophase$teamH2 == "Poland")])/ (length(kophase$teamH2_gs)), 4)*100
+advsen2   = round(length(kophase$teamH2[which(kophase$teamH2 == "Colombia")])/ (length(kophase$teamH2_gs)), 4)*100
+advcol2   = round(length(kophase$teamH2[which(kophase$teamH2 == "Senegal")])/ (length(kophase$teamH2_gs)), 4)*100
+advjpn2   = round(length(kophase$teamH2[which(kophase$teamH2 == "Japan")])/ (length(kophase$teamH2_gs)), 4)*100
 
 ghdata  = data.frame(
         pos        = rep(c("First", "Second"), each=4),
         country    = rep(c("Poland", "Colombia", "Senegal", "Japan"),2),
-        percentage = c(advpol1, advsen1, advcol1, advjpn1, advpol2, advsen2, advcol2, advjpn2)/(length(kophase$teamH1))*100)
+        percentage = c(advpol1, advsen1, advcol1, advjpn1, advpol2, advsen2, advcol2, advjpn2))
 
 ggplot(data = ghdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
@@ -354,10 +265,10 @@ ggplot(data = ghdata, aes(x = country, y = percentage, fill = pos)) +
 
 ```
 
-Poland   : has `r (advpol1 + advpol2)/(length(kophase$teamH1))*100` % advance to next round
+Poland   : has `r (advpol1 + advpol2)` % advance to next round
 
-Colombia : has `r (advsen1 + advsen2)/(length(kophase$teamH1))*100` % advance to next round
+Colombia : has `r (advsen1 + advsen2)` % advance to next round
 
-Senegal  : has `r (advcol1 + advcol2)/(length(kophase$teamH1))*100` % advance to next round
+Senegal  : has `r (advcol1 + advcol2)` % advance to next round
 
-Japan    : has `r (advjpn1 + advjpn2)/(length(kophase$teamH1))*100` % advance to next round
+Japan    : has `r (advjpn1 + advjpn2)` % advance to next round

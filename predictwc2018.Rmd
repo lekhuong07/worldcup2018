@@ -1,10 +1,10 @@
 ---
-title: "World Cup 2018 prediction"
-Author: "Khuong Le"
+title: "World Cup 2018 group stage stimulation"
+author: "Khuong Le"
 output: html_document
 ---
 
-This is a project for prediction from group stage to Round 16, quarterfinals, semifinals final and runner-up
+This is a project for prediction from group stage to Round 16, quarterfinals, semifinals final and runner-up. This specific Rmarkdown is for running the group stage to give different results for data to predict which teams will advace to next round. The result is on knockout_phase.Rmd. 
 
 Load different packages that will use in this model:
 
@@ -80,7 +80,7 @@ rand_goals= function(pot1, pot2){
 rand_goals(1,2)
 ```
 
-Group A:
+Group A: (notes: Russia in the current ranking is seed 3 but since it's the home for this world cup so they will gain higher seed because they will have home advantage. Then it leads to Uruguay becomes leads 1. )
 ```{r}
 RSA = "Russia"
 RSA_pts = 0
@@ -647,7 +647,7 @@ resD   = data.frame (resultD1, resultD2, resultD3, resultD4, resultD5, resultD6)
 resD
 ```
 
-Set up to see the result table in group D
+Set up to see the result table in group D (notes: Iceland is still a mystery in this group but they are lucky that they get seed 3 so they will have higher chance to advance to next round than Nigeria .)
 ```{r}
 #if 2 teams have the same result in everything, determine the higher team by fifa ranking updated in May 17th
 
@@ -1275,42 +1275,30 @@ Reach knock-out phase
 ```{r}
 ko = data.frame(Match49, Match50, Match51, Match52, Match53, Match54, Match55, Match56)
 write.csv(ko, file = "ko1.csv")
-#kophase = read.csv("ko.csv")
-#kophase
 ```
 
 Win 49 vs Win 50
 ```{r}
 #This is match 57
-Match49
-Match50
 ```
 
 Win 53 vs Win 54
 ```{r}
 #This is match 58
-Match53
-Match54
 ```
 
 Win 55 vs Win 56
 ```{r}
 #This is match 59
-Match55
-Match56
 ```
 
 Win 51 vs Win 52
 ```{r}
 #This is match 60
-Match51
-Match52
 ```
 
 Semifinals 1: Win 57 vs Win 58
-```{r}
 
-```
 Semifinals 2: Win 59  vs Win 60
 
 Runner - up: Lose SF1 vs Lose SF2
