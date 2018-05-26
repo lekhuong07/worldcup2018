@@ -1,6 +1,7 @@
 ---
 title: "World Cup 2018 group stage stimulation"
 author: "Khuong Le"
+date: "23/2/2018"
 output: html_document
 ---
 

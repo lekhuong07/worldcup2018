@@ -1,0 +1,792 @@
+---
+title: "Who is the winner?"
+author: "Khuong Le"
+date: "23/5/2018"
+output: html_document
+---
+
+This Rmarkddown is used to predict matches in knock out stage to semifinals, third place match and final. 
+
+```{r}
+pkg_list = c("ggplot2", "stringr", "rvest", "tidyr", "dplyr", "base","scales","plyr", "reshape2")
+mia_pkgs = pkg_list[!(pkg_list %in% installed.packages()[,"Package"])]
+if(length(mia_pkgs) > 0) install.packages(mia_pkgs)
+loaded_pkgs = lapply(pkg_list, require, character.only=TRUE)
+```
+
+According to the knockout_phase document. Compare 3 of the following requirements: 1st position, second position and chance qualify. Have 2 out of 3 better means that teams can qualifiy.
+```{r}
+world_data = read.csv("worldcup_data.csv")
+kophase    = read.csv("ko.csv")
+```
+
+
+Goals for each team. 
+```{r}
+set.seed(1602)
+ko_goals = function(avggs1, avghis1, avggc2){
+  result = 0
+  avgscore = (avggs1  + avghis1)/2
+  oppconcd = (avgscore + avggc2)/2
+  prob = (avgscore + oppconcd)/4
+  result = round(avgscore) + rbinom(1,2,prob)
+  return (result)
+}
+```
+
+
+Functions for the score in knock-out stage.
+
+```{r}
+set.seed(2405)
+kophasegoals = function(name1, avggs1, avggc1, avghis1, name2, avggs2, avggc2, avghis2){
+  result = vector(mode = "numeric", length = 8)
+  goalteam1 = ko_goals(avggs1, avghis1, avggc2) 
+  goalteam2 = ko_goals(avggs2, avghis2, avggc1)
+  j = 1
+  k = 1
+  penteam1  = vector(mode = "numeric", length = j)
+  penteam2  = vector(mode = "numeric", length = k)
+  
+  result[1] = name1
+  result[2] = sum(goalteam1)
+  result[3] = sum(goalteam2)
+  result[4] = name2
+  
+  if(result[2] > result[3]){
+      result[5] = "No penalty"
+      result[6] = 0
+      result[7] = 0
+      result[8] = name1
+  }
+
+  else if(result[2] < result[3]){ 
+    result[5] = "No penalty"
+    result[6] = 0
+    result[7] = 0
+    result[8] = name2
+  }
+  else if (result[2] == result[3]){
+    result[5] = "Penalty"
+    for(i in 1:100){
+      penteam1[j] = rbinom(1,1,0.5)
+      penteam2[k] = rbinom(1,1,0.5)
+      j = j + 1
+      k = k + 1
+      if((sum(penteam1) >=4 || sum(penteam2) >= 3) && abs(sum(penteam1) - sum(penteam2)) == 2) { 
+        result[6] = sum(penteam1)
+        result[7] = sum(penteam2)
+        break
+      }
+    }
+    if(result[6] > result[7]){  result[8] = name1  }
+    else{ result[8] = name2  }
+  }
+  
+  return(result)
+}
+```
+
+
+
+Play each match in the ko out stage 1000 times and find the average for the result.
+```{r}
+#Left brackets
+# > 80%    : winner round up, loser round down (if < 0.85) (no penalty)
+# 60 - 80% : no decimal (no penalty)
+# 50 - 60% : round both team. (penalty)
+# 49: 1C vs 2D (France - Croatia)
+# 50: 1A vs 2B (Uruguay - Portugal)
+# 51: 1B vs 2A (Spain - Russia)
+# 52: 1D vs 2C (Argentina - Denmark)
+```
+
+Left brackets
+
+Head to head record is from this website : https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/
+
+First match:
+```{r}
+set.seed(1602)
+n = 1000
+# 1C vs 2D (France - Croatia)
+fra_gs = round(sum(kophase$teamC1_gs[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+fra_gc = round(sum(kophase$teamC1_gc[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+cro_gs = round(sum(kophase$teamD2_gs[which(kophase$teamD2 == "Croatia")])/(length(kophase$teamD2[which((kophase$teamD2 == "Croatia"))])*6),2)
+cro_gc = round(sum(kophase$teamD2_gc[which(kophase$teamD2 == "Croatia")])/(length(kophase$teamD2[which((kophase$teamD2 == "Croatia"))])*6),2)
+match49 = data.frame(team1 = c("France"), team2 = c("Croatia"), played = c(5), fraW = c(3), draw = c(2), croW = c(0), FRA_gs = c(9), CRO_gs = c(3),
+                      avggfra_gs = c(fra_gs), avggfra_gc = c(fra_gc), avggcro_gs = c(cro_gs), avggcro_gc = c(cro_gc))
+#france gs = cro_gc
+avghisfra = match49$FRA_gs / match49$played
+avghiscro = match49$CRO_gs / match49$played
+
+resmatch49 = NULL
+for(i in 1:n){
+resmatch49[i] = list(kophasegoals(as.character(match49$team1), match49$avggfra_gs, match49$avggfra_gc, avghisfra, as.character(match49$team2), match49$avggcro_gs, match49$avggcro_gc, avghiscro))
+}
+```
+
+Analyze match 49
+
+```{r}
+france_win_per  = 0
+france_gs = 0
+croatia_win_per = 0
+croatia_gs = 0
+for(i in 1:n){
+  if(resmatch49[[i]][8] == "France"){ france_win_per = france_win_per + 1 }
+  else{ croatia_win_per = croatia_win_per + 1 }
+  france_gs  = france_gs  + as.numeric(resmatch49[[i]][2])
+  croatia_gs = croatia_gs + as.numeric(resmatch49[[i]][3])
+}
+france_win_per/n * 100
+round(france_gs / n,2)
+croatia_win_per/n * 100
+round(croatia_gs / n,2)
+```
+
+France 3 - 1 Croatia 
+
+Second match:
+```{r}
+set.seed(1602)
+# 1A vs 2B (Uruguay - Portugal)
+uru_gs = round(sum(kophase$teamA1_gs[which(kophase$teamA1 == "Uruguay")])/(length(kophase$teamA1[which((kophase$teamA1 == "Uruguay"))])*6),2)
+uru_gc = round(sum(kophase$teamA1_gc[which(kophase$teamA1 == "Uruguay")])/(length(kophase$teamA1[which((kophase$teamA1 == "Uruguay"))])*6),2)
+por_gs = round(sum(kophase$teamB2_gs[which(kophase$teamB2 == "Portugal")])/(length(kophase$teamB2[which((kophase$teamB2 == "Portugal"))])*6),2)
+por_gc = round(sum(kophase$teamB2_gc[which(kophase$teamB2 == "Portugal")])/(length(kophase$teamB2[which((kophase$teamB2 == "Portugal"))])*6),2)
+match50 = data.frame(team1 = c("Uruguay"), team2 = c("Portugal"), played = c(2), uruW = c(0), draw = c(1), porW = c(1), URU_gs = c(1), POR_gs = c(4),
+                      avgguru_gs = c(uru_gs), avgguru_gc = c(uru_gc), avggpor_gs = c(por_gs), avggpor_gc = c(por_gc))
+
+#uruguay gs = por_gc
+avghisuru = match50$URU_gs / match50$played
+avghispor = match50$POR_gs / match50$played
+
+resmatch50 = NULL
+for(i in 1:n){
+resmatch50[i] = list(kophasegoals(as.character(match50$team1), match50$avgguru_gs, match50$avgguru_gc, avghisuru, as.character(match50$team2), match50$avggpor_gs, match50$avggpor_gc, avghispor))
+}
+```
+
+Analyze match 50
+
+```{r}
+portugal_win_per  = 0
+portugal_gs = 0
+uruguay_win_per = 0
+uruguay_gs = 0
+for(i in 1:n){
+  if(resmatch50[[i]][8] == "Portugal"){ portugal_win_per = portugal_win_per + 1 }
+  else{ uruguay_win_per = uruguay_win_per + 1 }
+  uruguay_gs   = uruguay_gs   + as.numeric(resmatch50[[i]][2])
+  portugal_gs  = portugal_gs  + as.numeric(resmatch50[[i]][3])
+}
+uruguay_win_per/n * 100
+round(uruguay_gs / n, 2)
+portugal_win_per/n * 100
+round(portugal_gs / n,2)
+
+```
+
+Uruguay 1 - 2 Portugal 
+
+Third match:
+```{r}
+# 1B vs 2A (Spain - Russia)
+set.seed(1602)
+esp_gs = round(sum(kophase$teamB1_gs[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+esp_gc = round(sum(kophase$teamB1_gc[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+rus_gs = round(sum(kophase$teamA2_gs[which(kophase$teamA2 == "Russia")])/(length(kophase$teamA2[which((kophase$teamA2 == "Russia"))])*6),2)
+rus_gc = round(sum(kophase$teamA2_gc[which(kophase$teamA2 == "Russia")])/(length(kophase$teamA2[which((kophase$teamA2 == "Russia"))])*6),2)
+match51 = data.frame(team1 = c("Spain"), team2 = c("Russia"), played = c(6), espW = c(4), draw = c(2), rusW = c(0), ESP_gs = c(12), RUS_gs = c(6),
+                      avggesp_gs = c(esp_gs), avggesp_gc = c(esp_gc), avggrus_gs = c(rus_gs), avggrus_gc = c(rus_gc))
+
+#Spain gs = Russia gc
+avghisesp = match51$ESP_gs / match51$played
+avghisrus = match51$RUS_gs / match51$played
+
+resmatch51 = NULL
+for(i in 1:n){
+resmatch51[i] = list(kophasegoals(as.character(match51$team1), match51$avggesp_gs, match51$avggesp_gc, avghisesp, as.character(match51$team2), match51$avggrus_gs, match51$avggrus_gc, avghisrus))
+}
+```
+
+Analyze match 51
+
+```{r}
+spain_win_per  = 0
+spain_gs = 0
+russia_win_per = 0
+russia_gs = 0
+for(i in 1:n){
+  if(resmatch51[[i]][8] == "Spain"){ spain_win_per = spain_win_per + 1 }
+  else{ russia_win_per = russia_win_per + 1 }
+  spain_gs  = spain_gs  + as.numeric(resmatch51[[i]][2])
+  russia_gs = russia_gs + as.numeric(resmatch51[[i]][3])
+}
+spain_win_per/n * 100
+round(spain_gs / n,2)
+russia_win_per/n * 100
+round(russia_gs / n, 2)
+```
+
+Spain 4 - 2 Russia 
+
+Fourth match:
+```{r}
+# 1D vs 2C (Argentina - Denmark)
+set.seed(1602)
+arg_gs = round(sum(kophase$teamD1_gs[which(kophase$teamD1 == "Argentina")])/(length(kophase$teamD1[which((kophase$teamD1 == "Argentina"))])*6),2)
+arg_gc = round(sum(kophase$teamD1_gc[which(kophase$teamD1 == "Argentina")])/(length(kophase$teamD1[which((kophase$teamD1 == "Argentina"))])*6),2)
+dan_gs = round(sum(kophase$teamC2_gs[which(kophase$teamC2 == "Denmark")])/(length(kophase$teamC2[which((kophase$teamC2 == "Denmark"))])*6),2)
+dan_gc = round(sum(kophase$teamC2_gc[which(kophase$teamC2 == "Denmark")])/(length(kophase$teamC2[which((kophase$teamC2 == "Denmark"))])*6),2)
+match52 = data.frame(team1 = c("Argentina"), team2 = c("Denmark"), played = c(3), argW = c(2), draw = c(0), denW = c(1), ARG_gs = c(4), DAN_gs = c(3),
+                      avggarg_gs = c(arg_gs), avggarg_gc = c(arg_gc), avggdan_gs = c(dan_gs), avggdan_gc = c(dan_gc))
+
+#Argentina gs = Denmark gc
+avghisarg = match52$ARG_gs / match52$played
+avghisdan = match52$DAN_gs / match52$played
+
+resmatch52 = NULL
+for(i in 1:n){
+resmatch52[i] = list(kophasegoals(as.character(match52$team1), match52$avggarg_gs, match52$avggarg_gc, avghisarg, as.character(match52$team2), match52$avggdan_gs, match52$avggdan_gc, avghisdan))
+}
+```
+
+Analyze match 52
+
+```{r}
+argentina_win_per  = 0
+argentina_gs = 0
+denmark_win_per = 0
+denmark_gs = 0
+
+for(i in 1:n){
+  if(resmatch52[[i]][8] == "Argentina"){ argentina_win_per = argentina_win_per + 1 }
+  else{ denmark_win_per = denmark_win_per + 1 }
+  argentina_gs  = argentina_gs  + as.numeric(resmatch52[[i]][2])
+  denmark_gs = denmark_gs + as.numeric(resmatch52[[i]][3])
+}
+argentina_win_per/n * 100
+round(argentina_gs / n,2)
+denmark_win_per/n * 100
+round(denmark_gs / n, 2)
+```
+
+Argentina 2 - 2 Denmark (Argentina win penalty)
+
+```{r}
+#Right brackets
+# > 80%    : winner round up, loser round down (if < .85) (no penalty)
+# 60 - 80% : no decimal (no penalty)
+# 50 - 60% : round both team. (penalty)
+# 53: 1E vs 2F (Brazil - Mexico)
+# 54: 1G vs 2H (Belgium - Colombia)
+# 55: 1F vs 2E (Germany - Switzerland)
+# 56: 1H vs 2G (Poland - England)
+```
+
+First match
+```{r}
+# 1E vs 2F (Brazil - Mexico)
+set.seed(1602)
+bra_gs = round(sum(kophase$teamE1_gs[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+bra_gc = round(sum(kophase$teamE1_gc[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+mex_gs = round(sum(kophase$teamF2_gs[which(kophase$teamF2 == "Mexico")])/(length(kophase$teamF2[which((kophase$teamF2 == "Mexico"))])*6),2)
+mex_gc = round(sum(kophase$teamF2_gc[which(kophase$teamF2 == "Mexico")])/(length(kophase$teamF2[which((kophase$teamF2 == "Mexico"))])*6),2)
+match53 = data.frame(team1 = c("Brazil"), team2 = c("Mexico"), played = c(40), bragW = c(23), draw = c(7), mexW = c(10), BRA_gs = c(73), MEX_gs = c(36),
+                      avggbra_gs = c(bra_gs), avggbra_gc = c(bra_gc), avggmex_gs = c(mex_gs), avggmex_gc = c(mex_gc))
+
+#Brazil gs = Mexico gc
+avghisbra = match53$BRA_gs / match53$played
+avghismex = match53$MEX_gs / match53$played
+
+resmatch53 = NULL
+for(i in 1:n){
+resmatch53[i] = list(kophasegoals(as.character(match53$team1), match53$avggbra_gs, match53$avggbra_gc, avghisbra, as.character(match53$team2), match53$avggmex_gs, match53$avggmex_gc, avghismex))
+}
+```
+
+Analyze match 53
+
+```{r}
+brazil_win_per  = 0
+brazil_gs = 0
+mexico_win_per = 0
+mexico_gs = 0
+
+for(i in 1:n){
+  if(resmatch53[[i]][8] == "Brazil"){ brazil_win_per = brazil_win_per + 1 }
+  else{ mexico_win_per = mexico_win_per + 1 }
+  brazil_gs = brazil_gs  + as.numeric(resmatch53[[i]][2])
+  mexico_gs = mexico_gs + as.numeric(resmatch53[[i]][3])
+}
+brazil_win_per/n * 100
+round(brazil_gs / n,2)
+mexico_win_per/n * 100
+round(mexico_gs / n, 2)
+```
+
+Brazil 4 - 1 Mexico
+
+Second match
+```{r}
+#1G vs 2H (Belgium - Colombia)
+set.seed(1602)
+bel_gs = round(sum(kophase$teamG1_gs[which(kophase$teamG1 == "Belgium")])/(length(kophase$teamG1[which((kophase$teamG1 == "Belgium"))])*6),2)
+bel_gc = round(sum(kophase$teamG1_gc[which(kophase$teamG1 == "Belgium")])/(length(kophase$teamG1[which((kophase$teamG1 == "Belgium"))])*6),2)
+col_gs = round(sum(kophase$teamH2_gs[which(kophase$teamH2 == "Colombia")])/(length(kophase$teamH2[which((kophase$teamH2 == "Colombia"))])*6),2)
+col_gc = round(sum(kophase$teamH2_gc[which(kophase$teamH2 == "Colombia")])/(length(kophase$teamH2[which((kophase$teamH2 == "Colombia"))])*6),2)
+match54 = data.frame(team1 = c("Belgium"), team2 = c("Colombia"), played = c(2), belgW = c(1), draw = c(0), colW = c(1), BEL_gs = c(2), COL_gs = c(2),
+                      avggbel_gs = c(bel_gs), avggbel_gc = c(bel_gc), avggcol_gs = c(col_gs), avggcol_gc = c(col_gc))
+
+#Belgium gs = Colombia gc
+avghisbel = match54$BEL_gs / match54$played
+avghiscol = match54$COL_gs / match54$played
+
+resmatch54 = NULL
+for(i in 1:n){
+resmatch54[i] = list(kophasegoals(as.character(match54$team1), match54$avggbel_gs, match54$avggbel_gc, avghisbel, as.character(match54$team2), match54$avggcol_gs, match54$avggcol_gc, avghiscol))
+}
+```
+
+Analyze match 54
+
+```{r}
+belgium_win_per  = 0
+belgium_gs = 0
+colombia_win_per = 0
+colombia_gs = 0
+
+for(i in 1:n){
+  if(resmatch54[[i]][8] == "Belgium"){ belgium_win_per = belgium_win_per + 1 }
+  else{ colombia_win_per = colombia_win_per + 1 }
+  belgium_gs  = belgium_gs  + as.numeric(resmatch54[[i]][2])
+  colombia_gs = colombia_gs + as.numeric(resmatch54[[i]][3])
+}
+belgium_win_per/n * 100
+round(belgium_gs / n,2)
+colombia_win_per/n * 100
+round(colombia_gs / n, 2)
+```
+
+Belgium 2 - 2 Colombia (Belgium win penalty)
+
+Third match
+
+```{r}
+#1F vs 2E (Germany - Switzerland)
+set.seed(1602)
+ger_gs = round(sum(kophase$teamF1_gs[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+ger_gc = round(sum(kophase$teamF1_gc[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+swi_gs = round(sum(kophase$teamE2_gs[which(kophase$teamE2 == "Switzerland")])/(length(kophase$teamE2[which((kophase$teamE2 == "Switzerland"))])*6),2)
+swi_gc = round(sum(kophase$teamE2_gc[which(kophase$teamE2 == "Switzerland")])/(length(kophase$teamE2[which((kophase$teamE2 == "Switzerland"))])*6),2)
+match55 = data.frame(team1 = c("Germany"), team2 = c("Switzerland"), played = c(50), gergW = c(35), draw = c(6), swiW = c(9), GER_gs = c(134), SWI_gs = c(65),
+                      avggger_gs = c(ger_gs), avggger_gc = c(ger_gc), avggswi_gs = c(swi_gs), avggswi_gc = c(swi_gc))
+
+#Belgium gs = Colombia gc
+avghisger = match55$GER_gs / match55$played
+avghisswi = match55$SWI_gs / match55$played
+
+resmatch55 = NULL
+for(i in 1:n){
+resmatch55[i] = list(kophasegoals(as.character(match55$team1), match55$avggger_gs, match55$avggger_gc, avghisger, as.character(match55$team2), match55$avggswi_gs, match55$avggswi_gc, avghisswi))
+}
+```
+
+Analyze match 55
+
+```{r}
+germany_win_per  = 0
+germany_gs = 0
+switzerland_win_per = 0
+switzerland_gs = 0
+
+for(i in 1:n){
+  if(resmatch55[[i]][8] == "Germany"){ germany_win_per = germany_win_per + 1 }
+  else{ switzerland_win_per = switzerland_win_per + 1 }
+  germany_gs  = germany_gs  + as.numeric(resmatch55[[i]][2])
+  switzerland_gs = switzerland_gs + as.numeric(resmatch55[[i]][3])
+}
+germany_win_per/n * 100
+round(germany_gs / n,2)
+switzerland_win_per/n * 100
+round(switzerland_gs / n, 2)
+```
+
+Germany 4 - 2 Switzerland
+
+Fourth match
+
+```{r}
+#1H vs 2G (Poland - England)
+set.seed(1602)
+pol_gs = round(sum(kophase$teamH1_gs[which(kophase$teamH1 == "Poland")])/(length(kophase$teamH1[which((kophase$teamH1 == "Poland"))])*6),2)
+pol_gc = round(sum(kophase$teamH1_gc[which(kophase$teamH1 == "Poland")])/(length(kophase$teamH1[which((kophase$teamH1 == "Poland"))])*6),2)
+eng_gs = round(sum(kophase$teamG2_gs[which(kophase$teamG2 == "England")])/(length(kophase$teamG2[which((kophase$teamG2 == "England"))])*6),2)
+eng_gc = round(sum(kophase$teamG2_gc[which(kophase$teamG2 == "England")])/(length(kophase$teamG2[which((kophase$teamG2 == "England"))])*6),2)
+match56 = data.frame(team1 = c("Poland"), team2 = c("England"), played = c(19), polW = c(1), draw = c(7), engW = c(11), POL_gs = c(11), ENG_gs = c(30),
+                      avggpol_gs = c(pol_gs), avggpol_gc = c(pol_gc), avggeng_gs = c(eng_gs), avggeng_gc = c(eng_gc))
+
+#Belgium gs = Colombia gc
+avghispol = match56$POL_gs / match56$played
+avghiseng = match56$ENG_gs / match56$played
+
+resmatch56 = NULL
+for(i in 1:n){
+resmatch56[i] = list(kophasegoals(as.character(match56$team1), match56$avggpol_gs, match56$avggpol_gc, avghispol, as.character(match56$team2), match56$avggeng_gs, match56$avggeng_gc, avghiseng))
+}
+```
+
+Analyze match 56
+
+```{r}
+poland_win_per  = 0
+poland_gs = 0
+england_win_per = 0
+england_gs = 0
+
+for(i in 1:n){
+  if(resmatch56[[i]][8] == "Poland"){ poland_win_per = poland_win_per + 1 }
+  else{ england_win_per = england_win_per + 1 }
+  poland_gs  = poland_gs  + as.numeric(resmatch56[[i]][2])
+  england_gs = england_gs + as.numeric(resmatch56[[i]][3])
+}
+poland_win_per/n * 100
+round(poland_gs / n,2)
+england_win_per/n * 100
+round(england_gs / n, 2)
+```
+
+Poland 1 - 2 England
+
+Play each match in games from quaterfinals to finals 5000 times and find the average for the result.
+Don't count match before 1920s
+
+Match 57: Quarterfinal 1 (Win 49 vs Win 50) : France vs Portugal
+
+History match-up : https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Portugal/
+
+```{r}
+m = 5000
+set.seed(1602)
+fra_gsqf = round(sum(kophase$teamC1_gs[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+fra_gcqf = round(sum(kophase$teamC1_gc[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+por_gsqf = round(sum(kophase$teamB2_gs[which(kophase$teamB2 == "Portugal")])/(length(kophase$teamB2[which((kophase$teamB2 == "Portugal"))])*6),2)
+por_gcqf = round(sum(kophase$teamB2_gc[which(kophase$teamB2 == "Portugal")])/(length(kophase$teamB2[which((kophase$teamB2 == "Portugal"))])*6),2)
+match57 = data.frame(team1 = c("France"), team2 = c("Portugal"), played = c(25), fraW = c(18), draw = c(1), porW = c(6), FRA_gsqf = c(48), POR_gsqf = c(28),
+                      avggfra_gs = c(fra_gsqf), avggfra_gc = c(fra_gcqf), avggpor_gs = c(por_gsqf), avggpor_gc = c(por_gcqf))
+#france gs = cro_gc
+avghisfraqf = match57$FRA_gsqf / match57$played
+avghisporqf = match57$POR_gsqf / match57$played
+
+resmatch57 = NULL
+for(i in 1:m){
+resmatch57[i] = list(kophasegoals(as.character(match57$team1), match57$avggfra_gs, match57$avggfra_gc, avghisfraqf, as.character(match57$team2), match57$avggpor_gs, match57$avggpor_gc, avghisporqf))
+}
+```
+
+Analyze match 57
+
+```{r}
+france_win_perqf  = 0
+france_gsqf = 0
+portugal_win_perqf = 0
+portugal_gsqf = 0
+for(i in 1:m){
+  if(resmatch57[[i]][8] == "France"){ france_win_perqf = france_win_perqf + 1 }
+  else{ portugal_win_perqf = portugal_win_perqf + 1 }
+  france_gsqf   = france_gsqf  + as.numeric(resmatch57[[i]][2])
+  portugal_gsqf = portugal_gsqf + as.numeric(resmatch57[[i]][3])
+}
+france_win_perqf/m * 100
+round(france_gsqf/m,2)
+portugal_win_perqf/m * 100
+round(portugal_gsqf/m,2)
+```
+
+France 3 - 2 Portugal
+
+Match 58: Quarterfinal 2 (Win 53 vs Win 54): Brazil vs Belgium
+History match-up : https://www.11v11.com/teams/brazil/tab/opposingTeams/opposition/Belgium/
+
+```{r}
+set.seed(1602)
+bra_gsqf = round(sum(kophase$teamE1_gs[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+bra_gcqf = round(sum(kophase$teamE1_gc[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+bel_gsqf = round(sum(kophase$teamG1_gs[which(kophase$teamG1 == "Belgium")])/(length(kophase$teamG1[which((kophase$teamG1 == "Belgium"))])*6),2)
+bel_gcqf = round(sum(kophase$teamG1_gc[which(kophase$teamG1 == "Belgium")])/(length(kophase$teamG1[which((kophase$teamG1 == "Belgium"))])*6),2)
+match58 = data.frame(team1 = c("Brazil"), team2 = c("Mexico"), played = c(4), bragW = c(3), draw = c(0), belW = c(1), BRA_gsqf = c(9), BEL_gsqf = c(6),
+                      avggbra_gs = c(bra_gsqf), avggbra_gc = c(bra_gcqf), avggbel_gs = c(bel_gsqf), avggbel_gc = c(bel_gcqf))
+
+#Brazil gs = Mexico gc
+avghisbraqf = match58$BRA_gsqf / match58$played
+avghisbelqf = match58$BEL_gsqf / match58$played
+
+resmatch58 = NULL
+for(i in 1:m){
+resmatch58[i] = list(kophasegoals(as.character(match58$team1), match58$avggbra_gs, match58$avggbra_gc, avghisbraqf, as.character(match58$team2), match58$avggbel_gs, match58$avggbel_gc, avghisbelqf))
+}
+```
+
+Analyze match 58
+
+```{r}
+brazil_win_perqf  = 0
+brazil_gsqf = 0
+belgium_win_perqf = 0
+belgium_gsqf = 0
+
+for(i in 1:m){
+  if(resmatch58[[i]][8] == "Brazil"){ brazil_win_perqf = brazil_win_perqf + 1 }
+  else{ belgium_win_perqf = belgium_win_perqf + 1 }
+  brazil_gsqf = brazil_gsqf  + as.numeric(resmatch58[[i]][2])
+  belgium_gsqf = belgium_gsqf + as.numeric(resmatch58[[i]][3])
+}
+brazil_win_perqf/m * 100
+round(brazil_gsqf/m ,2)
+belgium_win_perqf/m * 100
+round(belgium_gsqf/m, 2)
+```
+
+Brazil 3 - 2 Belgium
+
+Match 59: Quarterfinal 3 (Win 55 vs Win 56): Germany vs England
+History match-up : https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/England/
+
+```{r}
+set.seed(1602)
+ger_gsqf = round(sum(kophase$teamF1_gs[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+ger_gcqf = round(sum(kophase$teamF1_gc[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+eng_gsqf = round(sum(kophase$teamG2_gs[which(kophase$teamG2 == "England")])/(length(kophase$teamG2[which((kophase$teamG2 == "England"))])*6),2)
+eng_gcqf = round(sum(kophase$teamG2_gc[which(kophase$teamG2 == "England")])/(length(kophase$teamG2[which((kophase$teamG2 == "England"))])*6),2)
+match59 = data.frame(team1 = c("Germany"), team2 = c("England"), played = c(32), gergW = c(15), draw = c(4), engW = c(13), GER_gs = c(40), ENG_gs = c(53),
+                      avggger_gs = c(ger_gsqf), avggger_gc = c(ger_gcqf), avggeng_gs = c(eng_gsqf), avggeng_gc = c(eng_gcqf))
+
+#Belgium gs = Colombia gc
+avghisgerqf = match59$GER_gs / match59$played
+avghisengqf = match59$ENG_gs / match59$played
+
+resmatch59 = NULL
+for(i in 1:m){
+resmatch59[i] = list(kophasegoals(as.character(match59$team1), match59$avggger_gs, match59$avggger_gc, avghisgerqf, as.character(match59$team2), match59$avggeng_gs, match59$avggeng_gc, avghisengqf))
+}
+```
+
+Analyze match 59
+
+```{r}
+germany_win_perqf  = 0
+germany_gsqf = 0
+england_win_perqf = 0
+england_gsqf = 0
+
+for(i in 1:m){
+  if(resmatch59[[i]][8] == "Germany"){ germany_win_perqf = germany_win_perqf + 1 }
+  else{ england_win_perqf = england_win_perqf + 1 }
+  germany_gsqf = germany_gsqf + as.numeric(resmatch59[[i]][2])
+  england_gsqf = england_gsqf + as.numeric(resmatch59[[i]][3])
+}
+germany_win_perqf/m * 100
+round(germany_gsqf /m,2)
+england_win_perqf/m * 100
+round(england_gsqf /m, 2)
+```
+
+Germany 2 - 2 England (Germany win on penalty)
+
+Match 60: Quarterfinal 4 (Win 51 vs Win 52): Spain vs Argentina
+History match-up : https://www.11v11.com/teams/spain/tab/opposingTeams/opposition/Argentina/
+
+```{r}
+set.seed(1602)
+esp_gsqf = round(sum(kophase$teamB1_gs[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+esp_gcqf = round(sum(kophase$teamB1_gc[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+arg_gsqf = round(sum(kophase$teamD1_gs[which(kophase$teamD1 == "Argentina")])/(length(kophase$teamD1[which((kophase$teamD1 == "Argentina"))])*6),2)
+arg_gcqf = round(sum(kophase$teamD1_gc[which(kophase$teamD1 == "Argentina")])/(length(kophase$teamD1[which((kophase$teamD1 == "Argentina"))])*6),2)
+match60 = data.frame(team1 = c("Spain"), team2 = c("Argentina"), played = c(14), espW = c(6), draw = c(2), argW = c(6), ESP_gs = c(19), ARG_gs = c(18),
+                      avggesp_gs = c(esp_gsqf), avggesp_gc = c(esp_gcqf), avggarg_gs = c(arg_gsqf), avggarg_gc = c(arg_gcqf))
+
+#Spain gs = Russia gc
+avghisespqf = match60$ESP_gs / match60$played
+avghisargqf = match60$ARG_gs / match60$played
+
+resmatch60 = NULL
+for(i in 1:m){
+resmatch60[i] = list(kophasegoals(as.character(match60$team1), match60$avggesp_gs, match60$avggesp_gc, avghisespqf, as.character(match60$team2), match60$avggarg_gs, match60$avggarg_gc, avghisargqf))
+}
+```
+
+Analyze match 60
+
+```{r}
+spain_win_perqf  = 0
+spain_gsqf = 0
+argentina_win_perqf = 0
+argentina_gsqf = 0
+for(i in 1:m){
+  if(resmatch60[[i]][8] == "Spain"){ spain_win_perqf = spain_win_perqf + 1 }
+  else{ argentina_win_perqf = argentina_win_perqf + 1 }
+  spain_gsqf  = spain_gsqf  + as.numeric(resmatch60[[i]][2])
+  argentina_gsqf = argentina_gsqf + as.numeric(resmatch60[[i]][3])
+}
+spain_win_perqf/m * 100
+round(spain_gsqf/m ,2)
+argentina_win_perqf/m * 100
+round(argentina_gsqf/m, 2)
+```
+
+Spain 2 - 2 Argentina (Spain win on penalty)
+
+Semifinals 1  (Win 57 vs Win 58): France vs Brazil
+Match-up: https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Brazil/
+```{r}
+m = 5000
+set.seed(1602)
+fra_gssf = round(sum(kophase$teamC1_gs[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+fra_gcsf = round(sum(kophase$teamC1_gc[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+bra_gssf = round(sum(kophase$teamE1_gs[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+bra_gcsf = round(sum(kophase$teamE1_gc[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+match61 = data.frame(team1 = c("France"), team2 = c("Brazil"), played = c(15), fraW = c(6), draw = c(3), braW = c(6), FRA_gs = c(18), BRA_gs = c(24),
+                      avggfra_gs = c(fra_gssf), avggfra_gc = c(fra_gcsf), avggbra_gs = c(bra_gssf), avggbra_gc = c(bra_gcsf))
+#france gs = cro_gc
+avghisfrasf = match61$FRA_gs / match61$played
+avghisbrasf = match61$BRA_gs / match61$played
+
+resmatch61 = NULL
+for(i in 1:m){
+resmatch61[i] = list(kophasegoals(as.character(match61$team1), match61$avggfra_gs, match61$avggfra_gc, avghisfrasf, as.character(match61$team2), match61$avggbra_gs, match61$avggbra_gc, avghisbrasf))
+}
+```
+
+Analyze match 61
+
+```{r}
+france_win_persf  = 0
+france_gssf = 0
+brazil_win_persf = 0
+brazil_gssf = 0
+for(i in 1:m){
+  if(resmatch61[[i]][8] == "France"){ france_win_persf = france_win_persf + 1 }
+  else{ brazil_win_persf = brazil_win_persf + 1 }
+  france_gssf  = france_gssf  + as.numeric(resmatch61[[i]][2])
+  brazil_gssf = brazil_gssf + as.numeric(resmatch61[[i]][3])
+}
+france_win_persf/m * 100
+round(france_gssf/m,2)
+brazil_win_persf/m * 100
+round(brazil_gssf/m,2)
+```
+
+France 2 - 2 Brazil : Brazil win on penalty
+Semifinals 1  (Win 59 vs Win 60): Germany vs Spain
+Matchup : https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/Spain/
+
+```{r}
+set.seed(1602)
+ger_gssf = round(sum(kophase$teamF1_gs[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+ger_gcsf = round(sum(kophase$teamF1_gc[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+esp_gssf = round(sum(kophase$teamB1_gs[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+esp_gcsf = round(sum(kophase$teamB1_gc[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+match62 = data.frame(team1 = c("Germany"), team2 = c("Spain"), played = c(23), gergW = c(9), draw = c(7), espW = c(7), GER_gs = c(29), ESP_gs = c(24),
+                      avggger_gs = c(ger_gssf), avggger_gc = c(ger_gcsf), avggesp_gs = c(esp_gssf), avggesp_gc = c(esp_gcsf))
+
+#Belgium gs = Colombia gc
+avghisgersf = match62$GER_gs / match62$played
+avghisespsf = match62$ESP_gs / match62$played
+
+resmatch62 = NULL
+for(i in 1:m){
+resmatch62[i] = list(kophasegoals(as.character(match62$team1), match62$avggger_gs, match62$avggger_gc, avghisgersf, as.character(match62$team2), match62$avggesp_gs, match62$avggesp_gc, avghisespsf))
+}
+```
+
+Analyze match 59
+
+```{r}
+germany_win_persf  = 0
+germany_gssf = 0
+spain_win_persf = 0
+spain_gssf = 0
+
+for(i in 1:m){
+  if(resmatch62[[i]][8] == "Germany"){ germany_win_persf = germany_win_persf + 1 }
+  else{ spain_win_persf = spain_win_persf + 1 }
+  germany_gssf = germany_gssf + as.numeric(resmatch62[[i]][2])
+  spain_gssf = spain_gssf + as.numeric(resmatch62[[i]][3])
+}
+germany_win_persf/m * 100
+round(germany_gssf/m,2)
+spain_win_persf/m * 100
+round(spain_gssf/m, 2)
+```
+Germany 2 - 2 Spain Germany win on penalty
+
+Finals Brazil vs Germany
+```{r}
+m = 5000
+set.seed(1602)
+bra_gsf = round(sum(kophase$teamE1_gs[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+bra_gcf = round(sum(kophase$teamE1_gc[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
+ger_gsf = round(sum(kophase$teamF1_gs[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+ger_gcf = round(sum(kophase$teamF1_gc[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
+
+match64 = data.frame(team1 = c("Brazil"), team2 = c("Germany"), played = c(23), braW = c(13), draw = c(5), gerW = c(5), BRA_gs = c(41), GER_gs = c(31),
+                      avggbra_gs = c(bra_gsf), avggbra_gc = c(bra_gcf), avggger_gs = c(ger_gsf), avggger_gc = c(ger_gcf))
+#france gs = cro_gc
+avghisbraf = match64$BRA_gs / match64$played
+avghisgerf = match64$GER_gs / match64$played
+
+resmatch64 = NULL
+for(i in 1:m){
+resmatch64[i] = list(kophasegoals(as.character(match64$team1), match64$avggbra_gs, match64$avggbra_gc, avghisbraf, as.character(match64$team2), match64$avggger_gs, match64$avggger_gc, avghisgerf))
+}
+```
+
+Analyze match 61
+
+```{r}
+brazil_win_perf = 0
+brazil_gsf = 0
+germany_win_perf = 0
+germany_gsf = 0
+for(i in 1:m){
+  if(resmatch61[[i]][8] == "Brazil"){ brazil_win_perf = brazil_win_perf + 1 }
+  else{ germany_win_perf = germany_win_perf + 1 }
+  brazil_gsf  = brazil_gsf  + as.numeric(resmatch61[[i]][2])
+  germany_gsf = germany_gsf + as.numeric(resmatch61[[i]][3])
+}
+brazil_win_perf/m * 100
+round(brazil_gsf/m,2)
+germany_win_perf/m * 100
+round(germany_gsf/m,2)
+```
+
+
+Summary:
+
+1/16
+France       3 - 1    Croatia    
+Uruguay      1 - 2    Portugal
+Brazil       4 - 1    Mexico 
+Belgium(W)   2 - 2    Colombia 
+
+
+Spain        4 - 2    Russia
+Argentina(W) 2 - 2    Denmark
+Germany      4 - 2    Switzerland
+Poland       2 - 1    England
+
+Quarterfinals:
+France       3 - 2    Portugal
+Brazil       3 - 2    Belgium
+
+Spain(W)     2 - 2    Argentina
+Germany(W)   2 - 2    England
+
+Semifinals:
+France       2 - 2    Brazil(W)
+Spain(W)     2 - 2    Germany
+
+Finals:
+Brazil(W)    2 - 2    Germany
