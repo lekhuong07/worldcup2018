@@ -224,18 +224,16 @@ kophasegoals = function(name1, avggs1, avggc1, avghis1, name2, avggs2, avggc2, a
   
   return(result)
 }</code></pre>
-<p>Play each match in the ko out stage 1000 times and find the average for the result.</p>
-<pre class="r"><code>#Left brackets
-# &gt; 80%    : winner round up, loser round down (if &lt; 0.85) (no penalty)
-# 60 - 80% : no decimal (no penalty)
-# 50 - 60% : round both team. (penalty)
-# 49: 1C vs 2D (France - Croatia)
-# 50: 1A vs 2B (Uruguay - Portugal)
-# 51: 1B vs 2A (Spain - Russia)
-# 52: 1D vs 2C (Argentina - Denmark)</code></pre>
-<p>Left brackets</p>
-<p>Head to head record is from this website : <a href="https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/" class="uri">https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/</a></p>
-<p>First match:</p>
+<p>Play each match in the ko out stage 1000 times and find the average for the result. . &gt; 80% : winner round up, loser round down (if &lt; 0.85) (no penalty) . 60 - 80% : no decimal (no penalty) . 50 - 60% : round both team. (penalty)</p>
+<p>M49: 1C vs 2D (France - Croatia)</p>
+<p>M50: 1A vs 2B (Uruguay - Portugal)</p>
+<p>M51: 1B vs 2A (Spain - Russia)</p>
+<p>M52: 1D vs 2C (Argentina - Denmark)</p>
+<p>M53: 1E vs 2F (Brazil - Mexico)</p>
+<p>M54: 1G vs 2H (Belgium - Colombia)</p>
+<p>M55: 1F vs 2E (Germany - Switzerland)</p>
+<p>M56: 1H vs 2G (Poland - England)</p>
+<p>Head to head record is from this website : <a href="https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/" class="uri">https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/</a> M49:</p>
 <pre class="r"><code>set.seed(1602)
 n = 1000
 # 1C vs 2D (France - Croatia)
@@ -273,7 +271,7 @@ france_win_per/n * 100</code></pre>
 <pre class="r"><code>round(croatia_gs / n,2)</code></pre>
 <pre><code>## [1] 1.67</code></pre>
 <p>France 3 - 1 Croatia</p>
-<p>Second match:</p>
+<p>M50: <a href="https://www.11v11.com/teams/uruguay/tab/opposingTeams/opposition/Portugal/" class="uri">https://www.11v11.com/teams/uruguay/tab/opposingTeams/opposition/Portugal/</a></p>
 <pre class="r"><code>set.seed(1602)
 # 1A vs 2B (Uruguay - Portugal)
 uru_gs = round(sum(kophase$teamA1_gs[which(kophase$teamA1 == &quot;Uruguay&quot;)])/(length(kophase$teamA1[which((kophase$teamA1 == &quot;Uruguay&quot;))])*6),2)
@@ -311,7 +309,7 @@ uruguay_win_per/n * 100</code></pre>
 <pre class="r"><code>round(portugal_gs / n,2)</code></pre>
 <pre><code>## [1] 2.21</code></pre>
 <p>Uruguay 1 - 2 Portugal</p>
-<p>Third match:</p>
+<p>M51: <a href="https://www.11v11.com/teams/spain/tab/opposingTeams/opposition/Russia/" class="uri">https://www.11v11.com/teams/spain/tab/opposingTeams/opposition/Russia/</a></p>
 <pre class="r"><code># 1B vs 2A (Spain - Russia)
 set.seed(1602)
 esp_gs = round(sum(kophase$teamB1_gs[which(kophase$teamB1 == &quot;Spain&quot;)])/(length(kophase$teamB1[which((kophase$teamB1 == &quot;Spain&quot;))])*6),2)
@@ -349,7 +347,7 @@ spain_win_per/n * 100</code></pre>
 <pre class="r"><code>round(russia_gs / n, 2)</code></pre>
 <pre><code>## [1] 1.9</code></pre>
 <p>Spain 4 - 2 Russia</p>
-<p>Fourth match:</p>
+<p>M52: <a href="https://www.11v11.com/teams/argentina/tab/opposingTeams/opposition/Denmark/" class="uri">https://www.11v11.com/teams/argentina/tab/opposingTeams/opposition/Denmark/</a></p>
 <pre class="r"><code># 1D vs 2C (Argentina - Denmark)
 set.seed(1602)
 arg_gs = round(sum(kophase$teamD1_gs[which(kophase$teamD1 == &quot;Argentina&quot;)])/(length(kophase$teamD1[which((kophase$teamD1 == &quot;Argentina&quot;))])*6),2)
@@ -388,15 +386,7 @@ argentina_win_per/n * 100</code></pre>
 <pre class="r"><code>round(denmark_gs / n, 2)</code></pre>
 <pre><code>## [1] 1.83</code></pre>
 <p>Argentina 2 - 2 Denmark (Argentina win penalty)</p>
-<pre class="r"><code>#Right brackets
-# &gt; 80%    : winner round up, loser round down (if &lt; .85) (no penalty)
-# 60 - 80% : no decimal (no penalty)
-# 50 - 60% : round both team. (penalty)
-# 53: 1E vs 2F (Brazil - Mexico)
-# 54: 1G vs 2H (Belgium - Colombia)
-# 55: 1F vs 2E (Germany - Switzerland)
-# 56: 1H vs 2G (Poland - England)</code></pre>
-<p>First match</p>
+<p>M53: <a href="https://www.11v11.com/teams/brazil/tab/opposingTeams/opposition/Mexico/" class="uri">https://www.11v11.com/teams/brazil/tab/opposingTeams/opposition/Mexico/</a></p>
 <pre class="r"><code># 1E vs 2F (Brazil - Mexico)
 set.seed(1602)
 bra_gs = round(sum(kophase$teamE1_gs[which(kophase$teamE1 == &quot;Brazil&quot;)])/(length(kophase$teamE1[which((kophase$teamE1 == &quot;Brazil&quot;))])*6),2)
@@ -435,7 +425,7 @@ brazil_win_per/n * 100</code></pre>
 <pre class="r"><code>round(mexico_gs / n, 2)</code></pre>
 <pre><code>## [1] 1.81</code></pre>
 <p>Brazil 4 - 1 Mexico</p>
-<p>Second match</p>
+<p>M54: <a href="https://www.11v11.com/teams/belgium/tab/opposingTeams/opposition/Colombia/" class="uri">https://www.11v11.com/teams/belgium/tab/opposingTeams/opposition/Colombia/</a></p>
 <pre class="r"><code>#1G vs 2H (Belgium - Colombia)
 set.seed(1602)
 bel_gs = round(sum(kophase$teamG1_gs[which(kophase$teamG1 == &quot;Belgium&quot;)])/(length(kophase$teamG1[which((kophase$teamG1 == &quot;Belgium&quot;))])*6),2)
@@ -474,7 +464,7 @@ belgium_win_per/n * 100</code></pre>
 <pre class="r"><code>round(colombia_gs / n, 2)</code></pre>
 <pre><code>## [1] 1.84</code></pre>
 <p>Belgium 2 - 2 Colombia (Belgium win penalty)</p>
-<p>Third match</p>
+<p>M55: <a href="https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/Switzerland/" class="uri">https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/Switzerland/</a></p>
 <pre class="r"><code>#1F vs 2E (Germany - Switzerland)
 set.seed(1602)
 ger_gs = round(sum(kophase$teamF1_gs[which(kophase$teamF1 == &quot;Germany&quot;)])/(length(kophase$teamF1[which((kophase$teamF1 == &quot;Germany&quot;))])*6),2)
@@ -513,7 +503,7 @@ germany_win_per/n * 100</code></pre>
 <pre class="r"><code>round(switzerland_gs / n, 2)</code></pre>
 <pre><code>## [1] 2</code></pre>
 <p>Germany 4 - 2 Switzerland</p>
-<p>Fourth match</p>
+<p>M56: <a href="https://www.11v11.com/teams/england/tab/opposingTeams/opposition/Poland/" class="uri">https://www.11v11.com/teams/england/tab/opposingTeams/opposition/Poland/</a></p>
 <pre class="r"><code>#1H vs 2G (Poland - England)
 set.seed(1602)
 pol_gs = round(sum(kophase$teamH1_gs[which(kophase$teamH1 == &quot;Poland&quot;)])/(length(kophase$teamH1[which((kophase$teamH1 == &quot;Poland&quot;))])*6),2)
@@ -815,12 +805,29 @@ brazil_win_perf/m * 100</code></pre>
 <pre><code>## [1] 42.76</code></pre>
 <pre class="r"><code>round(germany_gsf/m,2)</code></pre>
 <pre><code>## [1] 2.22</code></pre>
-<p>Summary: France ___ |_________ Croatia ___|</p>
-<p>Uruguay</p>
-<p>Portugal</p>
-<p>Brazil - Mexico Belgium - Colombia</p>
-<p>Spain - Russia Argentina - Denmark</p>
-<p>Germany - Switzerland Poland - England</p>
+<p>Summary: All the draw result might be different</p>
+<p>1/16</p>
+<p>Left brackets:</p>
+<p>France 3 - 1 Croatia</p>
+<p>Uruguay 1 - 2 Portugal</p>
+<p>Brazil 4 - 1 Mexico</p>
+<p>Belgium(W) 2 - 2 Colombia</p>
+<p>Right brackets:</p>
+<p>Spain 4 - 2 Russia</p>
+<p>Argentina(W) 2 - 2 Denmark</p>
+<p>Germany 4 - 2 Switzerland</p>
+<p>Poland 2 - 1 England</p>
+<p>Quarterfinals:</p>
+<p>Left brackets:</p>
+<p>France 3 - 2 Portugal</p>
+<p>Brazil 3 - 2 Belgium</p>
+<p>Right brackets:</p>
+<p>Spain(W) 2 - 2 Argentina</p>
+<p>Germany(W) 2 - 2 England</p>
+<p>Semifinals:</p>
+<p>France 2 - 2 Brazil(W)</p>
+<p>Spain(W) 2 - 2 Germany</p>
+<p>Finals: Brazil(W) 2 - 2 Germany</p>
 
 
 

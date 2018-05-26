@@ -90,22 +90,30 @@ kophasegoals = function(name1, avggs1, avggc1, avghis1, name2, avggs2, avggc2, a
 
 
 Play each match in the ko out stage 1000 times and find the average for the result.
-```{r}
-#Left brackets
-# > 80%    : winner round up, loser round down (if < 0.85) (no penalty)
-# 60 - 80% : no decimal (no penalty)
-# 50 - 60% : round both team. (penalty)
-# 49: 1C vs 2D (France - Croatia)
-# 50: 1A vs 2B (Uruguay - Portugal)
-# 51: 1B vs 2A (Spain - Russia)
-# 52: 1D vs 2C (Argentina - Denmark)
-```
+ . > 80%    : winner round up, loser round down (if < 0.85) (no penalty)
+ . 60 - 80% : no decimal (no penalty)
+ . 50 - 60% : round both team. (penalty)
+ 
+ M49: 1C vs 2D (France - Croatia)
+ 
+ M50: 1A vs 2B (Uruguay - Portugal)
+ 
+ M51: 1B vs 2A (Spain - Russia)
+ 
+ M52: 1D vs 2C (Argentina - Denmark)
 
-Left brackets
+ M53: 1E vs 2F (Brazil - Mexico)
+ 
+ M54: 1G vs 2H (Belgium - Colombia)
+ 
+ M55: 1F vs 2E (Germany - Switzerland)
+ 
+ M56: 1H vs 2G (Poland - England)
+
 
 Head to head record is from this website : https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/
+M49:
 
-First match:
 ```{r}
 set.seed(1602)
 n = 1000
@@ -147,7 +155,8 @@ round(croatia_gs / n,2)
 
 France 3 - 1 Croatia 
 
-Second match:
+M50: https://www.11v11.com/teams/uruguay/tab/opposingTeams/opposition/Portugal/
+
 ```{r}
 set.seed(1602)
 # 1A vs 2B (Uruguay - Portugal)
@@ -190,7 +199,8 @@ round(portugal_gs / n,2)
 
 Uruguay 1 - 2 Portugal 
 
-Third match:
+M51: https://www.11v11.com/teams/spain/tab/opposingTeams/opposition/Russia/
+
 ```{r}
 # 1B vs 2A (Spain - Russia)
 set.seed(1602)
@@ -232,7 +242,8 @@ round(russia_gs / n, 2)
 
 Spain 4 - 2 Russia 
 
-Fourth match:
+M52: https://www.11v11.com/teams/argentina/tab/opposingTeams/opposition/Denmark/
+
 ```{r}
 # 1D vs 2C (Argentina - Denmark)
 set.seed(1602)
@@ -275,18 +286,8 @@ round(denmark_gs / n, 2)
 
 Argentina 2 - 2 Denmark (Argentina win penalty)
 
-```{r}
-#Right brackets
-# > 80%    : winner round up, loser round down (if < .85) (no penalty)
-# 60 - 80% : no decimal (no penalty)
-# 50 - 60% : round both team. (penalty)
-# 53: 1E vs 2F (Brazil - Mexico)
-# 54: 1G vs 2H (Belgium - Colombia)
-# 55: 1F vs 2E (Germany - Switzerland)
-# 56: 1H vs 2G (Poland - England)
-```
+M53: https://www.11v11.com/teams/brazil/tab/opposingTeams/opposition/Mexico/
 
-First match
 ```{r}
 # 1E vs 2F (Brazil - Mexico)
 set.seed(1602)
@@ -329,7 +330,8 @@ round(mexico_gs / n, 2)
 
 Brazil 4 - 1 Mexico
 
-Second match
+M54: https://www.11v11.com/teams/belgium/tab/opposingTeams/opposition/Colombia/
+
 ```{r}
 #1G vs 2H (Belgium - Colombia)
 set.seed(1602)
@@ -372,7 +374,7 @@ round(colombia_gs / n, 2)
 
 Belgium 2 - 2 Colombia (Belgium win penalty)
 
-Third match
+M55: https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/Switzerland/
 
 ```{r}
 #1F vs 2E (Germany - Switzerland)
@@ -416,7 +418,7 @@ round(switzerland_gs / n, 2)
 
 Germany 4 - 2 Switzerland
 
-Fourth match
+M56: https://www.11v11.com/teams/england/tab/opposingTeams/opposition/Poland/
 
 ```{r}
 #1H vs 2G (Poland - England)
@@ -747,46 +749,65 @@ Analyze match 61
 
 ```{r}
 brazil_win_perf = 0
-brazil_gsf = 0
+brazil_gf = 0
 germany_win_perf = 0
-germany_gsf = 0
+germany_gf = 0
 for(i in 1:m){
-  if(resmatch61[[i]][8] == "Brazil"){ brazil_win_perf = brazil_win_perf + 1 }
+  if(resmatch64[[i]][8] == "Brazil"){ brazil_win_perf = brazil_win_perf + 1 }
   else{ germany_win_perf = germany_win_perf + 1 }
-  brazil_gsf  = brazil_gsf  + as.numeric(resmatch61[[i]][2])
-  germany_gsf = germany_gsf + as.numeric(resmatch61[[i]][3])
+  brazil_gf  = brazil_gf  + as.numeric(resmatch64[[i]][2])
+  germany_gf = germany_gf + as.numeric(resmatch64[[i]][3])
 }
 brazil_win_perf/m * 100
-round(brazil_gsf/m,2)
+round(brazil_gf/m,2)
 germany_win_perf/m * 100
-round(germany_gsf/m,2)
+round(germany_gf/m,2)
 ```
 
 
 Summary: All the draw result might be different
 
 1/16
-France       3 - 1    Croatia    
-Uruguay      1 - 2    Portugal
-Brazil       4 - 1    Mexico 
-Belgium(W)   2 - 2    Colombia 
 
+Left brackets:
 
-Spain        4 - 2    Russia
-Argentina(W) 2 - 2    Denmark
-Germany      4 - 2    Switzerland
-Poland       2 - 1    England
+France     (W% = 92.9)   3 - 1    Croatia  (W% = 7.1)
+
+Uruguay    (W% = 35.4)   1 - 2    Portugal (W% = 64.6)
+
+Brazil     (W% = 92.1)   4 - 1    Mexico   (W% = 7.9)
+
+Belgium(W) (W% = 54.8)   2 - 2    Colombia (W% = 45.2)
+
+Right brackets:
+
+Spain        (W% = 90)    4 - 2    Russia      (W% = 10)
+
+Argentina(W) (W% = 59.9)  2 - 2    Denmark     (W% = 40.1)
+
+Germany      (W% = 95.5)  4 - 2    Switzerland (W% = 4.5)
+
+Poland       (W% = 35.5)  2 - 1    England     (W% = 64.5)
 
 Quarterfinals:
-France       3 - 2    Portugal
-Brazil       3 - 2    Belgium
 
-Spain(W)     2 - 2    Argentina
-Germany(W)   2 - 2    England
+Left brackets:
+
+France  (W% = 90.44)    3 - 2    Portugal (W% = 9.56)
+
+Brazil  (W% = 87.8)     3 - 2    Belgium  (W% = 12.2)
+
+Right brackets:
+
+Germany(W) (W% = 52.02)  2 - 2    England  (W% = 47.98)
+
+Spain(W)   (W% = 50.3)  2 - 2    Argentina (W% = 49.7)
 
 Semifinals:
-France       2 - 2    Brazil(W)
-Spain(W)     2 - 2    Germany
+
+France  (W% = 42.76)  2 - 2    Brazil(W)  (W% = 57.24)
+
+Spain   (W% = 46.42)  2 - 2    Germany(W) (W% = 53.58)
 
 Finals:
-Brazil(W)    2 - 2    Germany
+Brazil(W) (W% = 42.76)    2 - 2    Germany (W% = 42.76)
