@@ -35,10 +35,11 @@ gadata  = data.frame(
         country    = rep(c("Egypt", "Russia", "Saudi Arabia", "Uruguay"),2),
         percentage = c(advegy1, advrus1, advksa1, advuru1, advegy2, advrus2, advksa2, advuru2))
 
-ggplot(data = gadata, aes(x = country, y = percentage, fill = pos)) + 
+gA = ggplot(data = gadata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
-
+jpeg('gA.jpg')
+plot(gA)
 ```
 
 Uruguay     : has `r (advuru1 + advuru2)` % advance to next round
@@ -68,9 +69,11 @@ gbdata  = data.frame(
         country    = rep(c("Portugal", "Spain", "Morocco", "Iran"),2),
         percentage = c(advpor1, advesp1, advmar1, adviri1, advpor2, advesp2, advmar2, adviri2))
 
-ggplot(data = gbdata, aes(x = country, y = percentage, fill = pos)) + 
+gB = ggplot(data = gbdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
+jpeg('gB.jpg')
+plot(gB)
 ```
 
 Portugual : has `r (advpor1 + advpor2)` % advance to next round
@@ -99,10 +102,12 @@ gcdata  = data.frame(
         country    = rep(c("France", "Peru", "Denmark", "Australia"),2),
         percentage = c(advfra1, advper1, advdan1, advaus1, advfra2, advper2, advdan2, advaus2))
 
-ggplot(data = gcdata, aes(x = country, y = percentage, fill = pos)) + 
+gC = ggplot(data = gcdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 
+jpeg('gC.jpg')
+plot(gC)
 ```
 
 France    : has `r (advfra1 + advfra2)` % advance to next round
@@ -131,10 +136,11 @@ gddata  = data.frame(
         country    = rep(c("Argentina", "Iceland", "Croatia", "Nigeria"),2),
         percentage = c(advarg1, advice1, advcro1, advnga1, advarg2, advice2, advcro2, advnga2))
 
-ggplot(data = gddata, aes(x = country, y = percentage, fill = pos)) + 
+gD = ggplot(data = gddata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
-
+jpeg('gD.jpg')
+plot(gD)
 ```
 
 Argentina : has `r (advarg1 + advarg2)` % advance to next round
@@ -163,10 +169,11 @@ gedata  = data.frame(
         country    = rep(c("Brazil", "Switzerland", "Costa Rica", "Serbia"),2),
         percentage = c(advbra1, advswi1, advcri1, advsrb1, advbra2, advswi2,  advcri2, advsrb2))
 
-ggplot(data = gedata, aes(x = country, y = percentage, fill = pos)) + 
+gE = ggplot(data = gedata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
-
+jpeg('gE.jpg')
+plot(gE)
 ```
 
 Brazil      : has `r (advbra1 + advbra2)` % advance to next round
@@ -195,10 +202,11 @@ gfdata  = data.frame(
         country    = rep(c("Germany", "Mexico", "Sweden", "South Korea"),2),
         percentage = c(advger1, advmex1, advswe1, advkor1, advger2, advmex2, advswe2, advkor2))
 
-ggplot(data = gfdata, aes(x = country, y = percentage, fill = pos)) + 
+gF = ggplot(data = gfdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
-
+jpeg('gF.jpg')
+plot(gF)
 ```
 
 Germany     : has `r (advger1 + advger2)` % advance to next round
@@ -227,10 +235,11 @@ ggdata  = data.frame(
         country    = rep(c("Belgium", "England", "Tunisia", "Panama"),2),
         percentage = c(advbel1, adveng1, advtun1, advpan1, advbel2, adveng2, advtun2, advpan2))
 
-ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) + 
+gG = ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
-
+jpeg('gA.jpg')
+plot(gG)
 ```
 
 Belgium : has `r (advbel1 + advbel2)` % advance to next round
@@ -259,10 +268,12 @@ ghdata  = data.frame(
         country    = rep(c("Poland", "Colombia", "Senegal", "Japan"),2),
         percentage = c(advpol1, advsen1, advcol1, advjpn1, advpol2, advsen2, advcol2, advjpn2))
 
-ggplot(data = ghdata, aes(x = country, y = percentage, fill = pos)) + 
+gH = ggplot(data = ghdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 
+jpeg('gH.jpg')
+plot(gH)
 ```
 
 Poland   : has `r (advpol1 + advpol2)` % advance to next round
