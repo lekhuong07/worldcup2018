@@ -467,7 +467,6 @@ resultC5  = goals(DAN, world_data$Avg_GS[dan1], world_data$Avg_GC[dan1], world_d
 DAN_gs    = DAN_gs + as.numeric(resultC5[2])
 DAN_gc    = DAN_gc + as.numeric(resultC5[4])
 FRA_gs    = FRA_gs + as.numeric(resultC5[4])
-FRA_gc    = FRA_gc + as.numeric(resultC5[2])
 if(resultC5[2] > resultC5[4]) {  DAN_pts = DAN_pts + 3 }
 if(resultC5[2] < resultC5[4]) {  FRA_pts = FRA_pts + 3 }
 if(resultC5[2] == resultC5[4]){
@@ -1272,36 +1271,9 @@ Match55 = data.frame(qualF1,qualE2)
 Match56 = data.frame(qualH1,qualG2)
 ```
 
-Reach knock-out phase 
+Reach knock-out phase This one is used to collect data.
 ```{r}
 ko = data.frame(Match49, Match50, Match51, Match52, Match53, Match54, Match55, Match56)
 write.csv(ko, file = "ko1.csv")
 ```
 
-Win 49 vs Win 50
-```{r}
-#This is match 57
-```
-
-Win 53 vs Win 54
-```{r}
-#This is match 58
-```
-
-Win 55 vs Win 56
-```{r}
-#This is match 59
-```
-
-Win 51 vs Win 52
-```{r}
-#This is match 60
-```
-
-Semifinals 1: Win 57 vs Win 58
-
-Semifinals 2: Win 59  vs Win 60
-
-Runner - up: Lose SF1 vs Lose SF2
-
-Finals: Win SF1 vs Win SF2

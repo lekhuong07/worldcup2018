@@ -89,10 +89,14 @@ kophasegoals = function(name1, avggs1, avggc1, avghis1, name2, avggs2, avggc2, a
 
 
 
-Play each match in the ko out stage 1000 times and find the average for the result.
- . > 80%    : winner round up, loser round down (if < 0.85) (no penalty)
- . 60 - 80% : no decimal (no penalty)
- . 50 - 60% : round both team. (penalty)
+Play each match in the ko out stage 1000 times and find the average for the result. There are some check to minimize the number of matches that ends up with penalty.
+
+ . >= 90%        : (if diff = abs(gs1 –  gs2) > 1.35)  winner round up round about 0.5, loser round down about .85 else round about 0.5
+ 
+ . 53 -> < 90% : get only the 1st digit, if diff > 0.3 =  higher + 1 
+ 
+ . 50 -> < 53% : round about 0.5
+
  
  M49: 1C vs 2D (France - Croatia)
  
@@ -112,7 +116,8 @@ Play each match in the ko out stage 1000 times and find the average for the resu
 
 
 Head to head record is from this website : https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/
-M49:
+
+M49: https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Croatia/
 
 ```{r}
 set.seed(1602)
@@ -197,7 +202,7 @@ round(portugal_gs / n,2)
 
 ```
 
-Uruguay 1 - 2 Portugal 
+Uruguay 1 - 2 Portugal(W) 
 
 M51: https://www.11v11.com/teams/spain/tab/opposingTeams/opposition/Russia/
 
@@ -240,7 +245,7 @@ russia_win_per/n * 100
 round(russia_gs / n, 2)
 ```
 
-Spain 4 - 2 Russia 
+Spain 3 - 2 Russia 
 
 M52: https://www.11v11.com/teams/argentina/tab/opposingTeams/opposition/Denmark/
 
@@ -284,7 +289,7 @@ denmark_win_per/n * 100
 round(denmark_gs / n, 2)
 ```
 
-Argentina 2 - 2 Denmark (Argentina win penalty)
+Argentina 2 - 1 Denmark 
 
 M53: https://www.11v11.com/teams/brazil/tab/opposingTeams/opposition/Mexico/
 
@@ -328,7 +333,7 @@ mexico_win_per/n * 100
 round(mexico_gs / n, 2)
 ```
 
-Brazil 4 - 1 Mexico
+Brazil 3 - 1 Mexico
 
 M54: https://www.11v11.com/teams/belgium/tab/opposingTeams/opposition/Colombia/
 
@@ -372,7 +377,7 @@ colombia_win_per/n * 100
 round(colombia_gs / n, 2)
 ```
 
-Belgium 2 - 2 Colombia (Belgium win penalty)
+Belgium(W) 1 - 1 Colombia 
 
 M55: https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/Switzerland/
 
@@ -595,7 +600,7 @@ england_win_perqf/m * 100
 round(england_gsqf /m, 2)
 ```
 
-Germany 2 - 2 England (Germany win on penalty)
+Germany(W) 2 - 2 England 
 
 Match 60: Quarterfinal 4 (Win 51 vs Win 52): Spain vs Argentina
 History match-up : https://www.11v11.com/teams/spain/tab/opposingTeams/opposition/Argentina/
@@ -638,10 +643,11 @@ argentina_win_perqf/m * 100
 round(argentina_gsqf/m, 2)
 ```
 
-Spain 2 - 2 Argentina (Spain win on penalty)
+Spain(W) 2 - 2 Argentina 
 
 Semifinals 1  (Win 57 vs Win 58): France vs Brazil
 Match-up: https://www.11v11.com/teams/france/tab/opposingTeams/opposition/Brazil/
+
 ```{r}
 m = 5000
 set.seed(1602)
@@ -649,7 +655,7 @@ fra_gssf = round(sum(kophase$teamC1_gs[which(kophase$teamC1 == "France")])/(leng
 fra_gcsf = round(sum(kophase$teamC1_gc[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
 bra_gssf = round(sum(kophase$teamE1_gs[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
 bra_gcsf = round(sum(kophase$teamE1_gc[which(kophase$teamE1 == "Brazil")])/(length(kophase$teamE1[which((kophase$teamE1 == "Brazil"))])*6),2)
-match61 = data.frame(team1 = c("France"), team2 = c("Brazil"), played = c(15), fraW = c(6), draw = c(3), braW = c(6), FRA_gs = c(fra_gssf), BRA_gs = c(bra_gssf), avggfra_gs = c(fra_gssf), avggfra_gc = c(fra_gcsf), avggbra_gs = c(bra_gssf), avggbra_gc = c(bra_gcsf))
+match61 = data.frame(team1 = c("France"), team2 = c("Brazil"), played = c(15), fraW = c(6), draw = c(3), braW = c(6), FRA_gs = c(18), BRA_gs = c(24), avggfra_gs = c(fra_gssf), avggfra_gc = c(fra_gcsf), avggbra_gs = c(bra_gssf), avggbra_gc = c(bra_gcsf))
 #france gs = cro_gc
 avghisfrasf = match61$FRA_gs / match61$played
 avghisbrasf = match61$BRA_gs / match61$played
@@ -679,9 +685,10 @@ brazil_win_persf/m * 100
 round(brazil_gssf/m,2)
 ```
 
-France 2 - 2 Brazil : Brazil win on penalty
-Semifinals 1  (Win 59 vs Win 60): Germany vs Spain
-Matchup : Not looking at history matchup, using gs throughout tournament instead.
+France 1 - 2 Brazil 
+
+Semifinals 2  (Win 59 vs Win 60): Germany vs Spain
+Matchup: https://www.11v11.com/teams/germany/tab/opposingTeams/opposition/spain/
 
 ```{r}
 set.seed(1602)
@@ -689,7 +696,7 @@ ger_gssf = round(sum(kophase$teamF1_gs[which(kophase$teamF1 == "Germany")])/(len
 ger_gcsf = round(sum(kophase$teamF1_gc[which(kophase$teamF1 == "Germany")])/(length(kophase$teamF1[which((kophase$teamF1 == "Germany"))])*6),2)
 esp_gssf = round(sum(kophase$teamB1_gs[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
 esp_gcsf = round(sum(kophase$teamB1_gc[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
-match62 = data.frame(team1 = c("Germany"), team2 = c("Spain"), played = c(23), gergW = c(9), draw = c(7), espW = c(7), GER_gs = c(ger_gssf), ESP_gs = c(esp_gssf), avggger_gs = c(ger_gssf), avggger_gc = c(ger_gcsf), avggesp_gs = c(esp_gssf), avggesp_gc = c(esp_gcsf))
+match62 = data.frame(team1 = c("Germany"), team2 = c("Spain"), played = c(23), gergW = c(9), draw = c(7), espW = c(7), GER_gs = c(21), ESP_gs = c(16), avggger_gs = c(ger_gssf), avggger_gc = c(ger_gcsf), avggesp_gs = c(esp_gssf), avggesp_gc = c(esp_gcsf))
 
 #Belgium gs = Colombia gc
 avghisgersf = match62$GER_gs / match62$played
@@ -701,7 +708,7 @@ resmatch62[i] = list(kophasegoals(as.character(match62$team1), match62$avggger_g
 }
 ```
 
-Analyze match 59
+Analyze match 62
 
 ```{r}
 germany_win_persf  = 0
@@ -720,9 +727,53 @@ round(germany_gssf/m,2)
 spain_win_persf/m * 100
 round(spain_gssf/m, 2)
 ```
-Germany 1 - 1 Spain Germany win on penalty
 
-Finals Brazil vs Germany: Not looking at history matchup, using gs throughout tournament instead.
+Germany(W) 1 - 1 Spain 
+
+Third place: France vs Spain
+Not looking at history matchup, using gs throughout tournament instead. It's the very last match so every team will play like they have nothing to lost. So I will use data that each team performance in group stage.
+
+```{r}
+m = 5000
+set.seed(1602)
+fra_gstp = round(sum(kophase$teamC1_gs[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+fra_gctp = round(sum(kophase$teamC1_gc[which(kophase$teamC1 == "France")])/(length(kophase$teamC1[which((kophase$teamC1 == "France"))])*6),2)
+esp_gstp = round(sum(kophase$teamB1_gs[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+esp_gctp = round(sum(kophase$teamB1_gc[which(kophase$teamB1 == "Spain")])/(length(kophase$teamB1[which((kophase$teamB1 == "Spain"))])*6),2)
+match63 = data.frame(team1 = c("France"), team2 = c("Spain"), played = c(34), fraW = c(12), draw = c(7), spaW = c(15), FRA_gs = c(fra_gstp), ESP_gs = c(esp_gstp), avggfra_gs = c(fra_gstp), avggfra_gc = c(fra_gctp), avggesp_gs = c(esp_gstp), avggesp_gc = c(esp_gctp))
+#france gs = cro_gc
+avghisfratp = match63$FRA_gs / match63$played
+avghisesptp = match63$ESP_gs / match63$played
+
+resmatch63 = NULL
+for(i in 1:m){
+resmatch63[i] = list(kophasegoals(as.character(match63$team1), match63$avggfra_gs, match63$avggfra_gc, avghisfratp, as.character(match63$team2), match63$avggesp_gs, match63$avggesp_gc, avghisesptp))
+}
+
+```
+
+Analyze match 63
+
+```{r}
+france_win_persf  = 0
+france_gssf = 0
+spain_win_persf = 0
+spain_gssf = 0
+for(i in 1:m){
+  if(resmatch63[[i]][8] == "France"){ france_win_persf = france_win_persf + 1 }
+  else{ spain_win_persf = spain_win_persf + 1 }
+  france_gssf  = france_gssf  + as.numeric(resmatch63[[i]][2])
+  spain_gssf   = spain_gssf + as.numeric(resmatch63[[i]][3])
+}
+france_win_persf/m * 100
+round(france_gssf/m,2)
+spain_win_persf/m * 100
+round(spain_gssf/m,2)
+```
+France 2 - 2 Spain (W) 
+
+Finals Brazil vs Germany: Not looking at history matchup, using gs throughout tournament instead. It's the very last match so every team will play like they have nothing to lost. So I will use data that each team performance in group stage.
+
 ```{r}
 m = 5000
 set.seed(1602)
@@ -742,7 +793,7 @@ resmatch64[i] = list(kophasegoals(as.character(match64$team1), match64$avggbra_g
 }
 ```
 
-Analyze match 61
+Analyze match 64
 
 ```{r}
 brazil_win_perf = 0
@@ -761,50 +812,49 @@ germany_win_perf/m * 100
 round(germany_gf/m,2)
 ```
 
+Brazil 2 - 2 Germany(W)
 
 Summary: All the draw result might be different
 
-1/16
+1/16 knock - out stage: 
 
-Left brackets:
+France       (W% = 92.8)   3 - 1    Croatia  (W% = 7.2)
 
-France     (W% = 92.9)   3 - 1    Croatia  (W% = 7.1)
+Uruguay      (W% = 36.9)   1 - 2    Portugal (W% = 63.1)
 
-Uruguay    (W% = 35.4)   1 - 2    Portugal (W% = 64.6)
+Brazil       (W% = 92.1)   3 - 1    Mexico   (W% = 7.9)
 
-Brazil     (W% = 92.1)   4 - 1    Mexico   (W% = 7.9)
+Belgium(W)   (W% = 54.6)   1 - 1    Colombia (W% = 45.4)
 
-Belgium(W) (W% = 54.8)   2 - 2    Colombia (W% = 45.2)
+Spain        (W% = 90.5)   3 - 2    Russia      (W% = 9.5)
 
-Right brackets:
+Argentina    (W% = 58.9)   2 - 1    Denmark     (W% = 41.1)
 
-Spain        (W% = 90)    4 - 2    Russia      (W% = 10)
+Germany      (W% = 95.9)   4 - 2    Switzerland (W% = 4.1)
 
-Argentina(W) (W% = 59.9)  2 - 2    Denmark     (W% = 40.1)
-
-Germany      (W% = 95.5)  4 - 2    Switzerland (W% = 4.5)
-
-Poland       (W% = 35.5)  2 - 1    England     (W% = 64.5)
+Poland       (W% = 34.9)   1 - 2    England     (W% = 65.1)
 
 Quarterfinals:
 
-Left brackets:
+France     (W% = 90.66)   3 - 2    Portugal (W% = 9.34)
 
-France  (W% = 90.44)    3 - 2    Portugal (W% = 9.56)
+Brazil     (W% = 87.92)   3 - 2    Belgium  (W% = 12.08)
 
-Brazil  (W% = 87.8)     3 - 2    Belgium  (W% = 12.2)
+Germany(W) (W% = 51.42)   2 - 2    England  (W% = 48.58)
 
-Right brackets:
-
-Germany(W) (W% = 52.02)  2 - 2    England  (W% = 47.98)
-
-Spain(W)   (W% = 50.3)  2 - 2    Argentina (W% = 49.7)
+Spain(W)   (W% = 51.32)   2 - 2    Argentina (W% = 48.68)
 
 Semifinals:
 
-France  (W% = 48.82)  2 - 2    Brazil(W)  (W% = 51.18)
+France     (W% = 43.1)    1 - 2    Brazil     (W% = 56.9)
 
-Spain   (W% = 49.34)  2 - 2    Germany(W) (W% = 50.66)
+Spain     (W% = 45.76)    1 - 1    Germany(W) (W% = 54.24)
+
+Third place:
+
+France    (W% = 48.26)    2 - 2    Spain(W) (W% = 51.74)
 
 Finals:
-Brazil (W% = 47.84)   1 - 1    Germany(W) (W% = 52.16)
+
+Brazil    (W% = 47.6)     2 - 2    Germany(W) (W% = 52.4)
+
