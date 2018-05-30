@@ -340,7 +340,7 @@ ggdata  = data.frame(
 gG = ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
-jpeg('gA.jpg')
+jpeg('gG.jpg')
 plot(gG)
 gG</code></pre>
 <p>Belgium : has 86.2 % advance to next round</p>

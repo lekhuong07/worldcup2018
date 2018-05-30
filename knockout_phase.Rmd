@@ -244,7 +244,7 @@ ggdata  = data.frame(
 gG = ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) + 
     geom_bar(stat = "identity", position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
-jpeg('gA.jpg')
+jpeg('gG.jpg')
 plot(gG)
 gG
 ```
