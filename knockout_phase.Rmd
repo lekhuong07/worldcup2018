@@ -40,6 +40,7 @@ gA = ggplot(data = gadata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 jpeg('gA.jpg')
 plot(gA)
+gA
 ```
 
 Uruguay     : has `r (advuru1 + advuru2)` % advance to next round
@@ -74,6 +75,7 @@ gB = ggplot(data = gbdata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 jpeg('gB.jpg')
 plot(gB)
+gB
 ```
 
 Portugual : has `r (advpor1 + advpor2)` % advance to next round
@@ -108,6 +110,7 @@ gC = ggplot(data = gcdata, aes(x = country, y = percentage, fill = pos)) +
 
 jpeg('gC.jpg')
 plot(gC)
+gC
 ```
 
 France    : has `r (advfra1 + advfra2)` % advance to next round
@@ -141,6 +144,7 @@ gD = ggplot(data = gddata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 jpeg('gD.jpg')
 plot(gD)
+gD
 ```
 
 Argentina : has `r (advarg1 + advarg2)` % advance to next round
@@ -174,6 +178,7 @@ gE = ggplot(data = gedata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 jpeg('gE.jpg')
 plot(gE)
+gE
 ```
 
 Brazil      : has `r (advbra1 + advbra2)` % advance to next round
@@ -207,6 +212,7 @@ gF = ggplot(data = gfdata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 jpeg('gF.jpg')
 plot(gF)
+gF
 ```
 
 Germany     : has `r (advger1 + advger2)` % advance to next round
@@ -240,6 +246,7 @@ gG = ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = "darkred", size = 3)
 jpeg('gA.jpg')
 plot(gG)
+gG
 ```
 
 Belgium : has `r (advbel1 + advbel2)` % advance to next round
@@ -274,6 +281,7 @@ gH = ggplot(data = ghdata, aes(x = country, y = percentage, fill = pos)) +
 
 jpeg('gH.jpg')
 plot(gH)
+gH
 ```
 
 Poland   : has `r (advpol1 + advpol2)` % advance to next round

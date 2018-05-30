@@ -184,10 +184,11 @@ gA = ggplot(data = gadata, aes(x = country, y = percentage, fill = pos)) +
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 jpeg('gA.jpg')
-plot(gA)</code></pre>
+plot(gA)
+gA</code></pre>
 <p>Uruguay : has 94.8 % advance to next round</p>
-<p>Russia : has 65.4 % advance to next round</p>
-<p>Egypt : has 36.6 % advance to next round</p>
+<p>Russia : has 62 % advance to next round</p>
+<p>Egypt : has 40 % advance to next round</p>
 <p>Saudi Arabia: has 3.2 % advance to next round</p>
 <p>Group B:</p>
 <pre class="r"><code>advpor1   = round(length(kophase$teamB1[which(kophase$teamB1 == &quot;Portugal&quot;)])/ (length(kophase$teamB1)), 4)*100
@@ -209,7 +210,8 @@ gB = ggplot(data = gbdata, aes(x = country, y = percentage, fill = pos)) +
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 jpeg('gB.jpg')
-plot(gB)</code></pre>
+plot(gB)
+gB</code></pre>
 <p>Portugual : has 86 % advance to next round</p>
 <p>Spain : has 95.2 % advance to next round</p>
 <p>Morocco : has 8 % advance to next round</p>
@@ -235,7 +237,8 @@ gC = ggplot(data = gcdata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 
 jpeg('gC.jpg')
-plot(gC)</code></pre>
+plot(gC)
+gC</code></pre>
 <p>France : has 92.2 % advance to next round</p>
 <p>Peru : has 46.4 % advance to next round</p>
 <p>Denmark : has 51.6 % advance to next round</p>
@@ -260,7 +263,8 @@ gD = ggplot(data = gddata, aes(x = country, y = percentage, fill = pos)) +
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 jpeg('gD.jpg')
-plot(gD)</code></pre>
+plot(gD)
+gD</code></pre>
 <p>Argentina : has 98.2 % advance to next round</p>
 <p>Iceland : has 23.4 % advance to next round</p>
 <p>Croatia : has 66.6 % advance to next round</p>
@@ -285,7 +289,8 @@ gE = ggplot(data = gedata, aes(x = country, y = percentage, fill = pos)) +
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 jpeg('gE.jpg')
-plot(gE)</code></pre>
+plot(gE)
+gE</code></pre>
 <p>Brazil : has 94.4 % advance to next round</p>
 <p>Switzerland : has 72.6 % advance to next round</p>
 <p>Costa Rica : has 25 % advance to next round</p>
@@ -310,7 +315,8 @@ gF = ggplot(data = gfdata, aes(x = country, y = percentage, fill = pos)) +
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 jpeg('gF.jpg')
-plot(gF)</code></pre>
+plot(gF)
+gF</code></pre>
 <p>Germany : has 97.6 % advance to next round</p>
 <p>Mexico : has 59.8 % advance to next round</p>
 <p>Sweden : has 38.8 % advance to next round</p>
@@ -335,7 +341,8 @@ gG = ggplot(data = ggdata, aes(x = country, y = percentage, fill = pos)) +
     geom_bar(stat = &quot;identity&quot;, position=position_dodge()) +  
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 jpeg('gA.jpg')
-plot(gG)</code></pre>
+plot(gG)
+gG</code></pre>
 <p>Belgium : has 86.2 % advance to next round</p>
 <p>England : has 85.8 % advance to next round</p>
 <p>Tunisia : has 21 % advance to next round</p>
@@ -361,7 +368,8 @@ gH = ggplot(data = ghdata, aes(x = country, y = percentage, fill = pos)) +
     geom_text(aes(label = percentage), position = position_dodge(0.95), vjust=0.5, color = &quot;darkred&quot;, size = 3)
 
 jpeg('gH.jpg')
-plot(gH)</code></pre>
+plot(gH)
+gH</code></pre>
 <p>Poland : has 94.2 % advance to next round</p>
 <p>Colombia : has 63.4 % advance to next round</p>
 <p>Senegal : has 34.4 % advance to next round</p>
